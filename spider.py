@@ -53,105 +53,124 @@ medals_List = medals_dict['data']['medalsList']
 # https://api.cntv.cn/Olympic/getOlyMedalList?t=jsonp&cb=OM&serviceId=pcocean&countryid=USA
 country_code = [i.get('countryid') for i in medals_List]
 
-def remote_underline(val_dict):
-    subitemcode = val_dict['subitemcode']
-    subitemcode = subitemcode.replace('-', '')
-    itemcode = val_dict['itemcode']
-    itemcode = itemcode.replace('-', '')
-    playname = val_dict['playname']
-    playname = playname.replace(r'\\/', '·')
-    playname = playname.replace(r'\/', '·')
+# def remote_underline(val_dict):
+#     subitemcode = val_dict['subitemcode']
+#     subitemcode = subitemcode.replace('-', '')
+#     itemcode = val_dict['itemcode']
+#     itemcode = itemcode.replace('-', '')
+#     playname = val_dict['playname']
+#     playname = playname.replace(r'\\/', '·')
+#     playname = playname.replace(r'\/', '·')
+#
+#     val_dict['subitemcode'] = subitemcode
+#     val_dict['itemcode'] = itemcode
+#     val_dict['playname'] = playname
+#     return val_dict
+#
+#
+# def monitor_process(queue, event, size, lock):
+#     condition = True
+#     conn = sqlite3.connect("medalsDB")
+#     # 创建操作器
+#     cursor = conn.cursor()
+#
+#     sql_insert = '''
+#         INSERT INTO country_awards (
+#             playid, itemcodename, subitemname, subitemcode,
+#             medaltype, itemcode, startdatecn, countryname,
+#             playname, medal, totalurl, countryid
+#         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+#     '''
+#
+#     while True:
+#         with lock:
+#             if queue.empty() and event.is_set():
+#                 break
+#             val = queue.get()
+#
+#         values = [(entry['playid'], entry['itemcodename'], entry['subitemname'],
+#                    entry['subitemcode'], entry['medaltype'], entry['itemcode'],
+#                    entry['startdatecn'], entry['countryname'], entry['playname'],
+#                    entry['medal'], entry['totalurl'], entry['countryid']) for entry in val]
+#
+#         with lock:
+#             cursor.executemany(sql_insert, values)
+#             conn.commit()
+#             size.value += 1
+#     conn.close()
+#     print('监控进程退出')
+#
+# def request_html(msg_q, contry_list):
+#     item_url = 'https://api.cntv.cn/Olympic/getOlyMedalList?t=jsonp&cb=OM&serviceId=pcocean&countryid={country}'
+#     for target_id in contry_list:
+#         item_response = requests.get(item_url.format(country = target_id))
+#
+#         data = re.findall('OM(.*);', item_response.text)
+#         data = eval(data[0])
+#         data = data['data']
+#         medalList = data['medalList']
+#
+#         result_list = list(map(remote_underline, medalList))
+#         msg_q.put(result_list)
+#
+#
+# from multiprocessing import Process, Manager
+# import requests
+#
+#
+# if __name__ == "__main__":
+#     with Manager() as manager:
+#
+#         msg_q = manager.Queue()
+#         event = manager.Event()
+#         size = manager.Value('size', 0)
+#         lock = manager.Lock()
+#         processes = []
+#         batch_size = 10
+#         # 创建并启动进程
+#         monitor = Process(target = monitor_process, args = (msg_q, event, size, lock))
+#         monitor.start()
+#         print(f'创建并启动[监控]进程: {monitor.pid}')
+#
+#         for i in range(0, len(country_code), batch_size):
+#
+#             batch = country_code[i : i + batch_size]
+#             process = Process(target = request_html, args = (msg_q, batch))
+#             processes.append(process)
+#             process.start()
+#             print(f'创建并启动[任务]进程: {process.pid}')
+#
+#         # 等待所有进程完成
+#         print('爬取完成，现在回收任务进程...')
+#         for process in processes:
+#             process.join()
+#         else:
+#             print('回收任务进程完成')
+#         print('正在等待上传工作')
+#         event.set()
+#         monitor.join(timeout = 5)
+#         print('监控进程退出')
+#         print(msg_q.empty(), event.is_set())
+#         msg_q.task_done()
+#         exit(0)
+#         print(f'最后获取到了: {size.value} 条数据')
+#
 
-    val_dict['subitemcode'] = subitemcode
-    val_dict['itemcode'] = itemcode
-    val_dict['playname'] = playname
-    return val_dict
 
+# 爬取各国国旗图片：央视CCTV5 奖牌榜图片
+def request_country_flag(country_id):
+    url = f'https://p1.img.cctvpic.com/sports/data/olympic/teamImg/{country_id}.png'
+    image_response = requests.get(url)
+    if (image_response.status_code == 200):
+        image_bytes = image_response.content
+        image_name = f'static/image/flags/{country_id}.png'
+        with open(image_name, 'wb') as f:
+            f.write(image_bytes)
+        return (f'{image_name} 下载完成')
+    else:
+        return (f'{url} 下载失败')
 
-def monitor_process(queue, event, size, lock):
-    condition = True
-    conn = sqlite3.connect("medalsDB")
-    # 创建操作器
-    cursor = conn.cursor()
+import tqdm
 
-    sql_insert = '''
-        INSERT INTO country_awards (
-            playid, itemcodename, subitemname, subitemcode,
-            medaltype, itemcode, startdatecn, countryname,
-            playname, medal, totalurl, countryid
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    '''
-
-    while True:
-        with lock:
-            if queue.empty() and event.is_set():
-                break
-            val = queue.get()
-
-        values = [(entry['playid'], entry['itemcodename'], entry['subitemname'],
-                   entry['subitemcode'], entry['medaltype'], entry['itemcode'],
-                   entry['startdatecn'], entry['countryname'], entry['playname'],
-                   entry['medal'], entry['totalurl'], entry['countryid']) for entry in val]
-
-        with lock:
-            cursor.executemany(sql_insert, values)
-            conn.commit()
-            size.value += 1
-    conn.close()
-    print('监控进程退出')
-
-def request_html(msg_q, contry_list):
-    item_url = 'https://api.cntv.cn/Olympic/getOlyMedalList?t=jsonp&cb=OM&serviceId=pcocean&countryid={country}'
-    for target_id in contry_list:
-        item_response = requests.get(item_url.format(country = target_id))
-
-        data = re.findall('OM(.*);', item_response.text)
-        data = eval(data[0])
-        data = data['data']
-        medalList = data['medalList']
-
-        result_list = list(map(remote_underline, medalList))
-        msg_q.put(result_list)
-
-
-from multiprocessing import Process, Manager
-import requests
-
-
-if __name__ == "__main__":
-    with Manager() as manager:
-
-        msg_q = manager.Queue()
-        event = manager.Event()
-        size = manager.Value('size', 0)
-        lock = manager.Lock()
-        processes = []
-        batch_size = 10
-        # 创建并启动进程
-        monitor = Process(target = monitor_process, args = (msg_q, event, size, lock))
-        monitor.start()
-        print(f'创建并启动[监控]进程: {monitor.pid}')
-
-        for i in range(0, len(country_code), batch_size):
-
-            batch = country_code[i : i + batch_size]
-            process = Process(target = request_html, args = (msg_q, batch))
-            processes.append(process)
-            process.start()
-            print(f'创建并启动[任务]进程: {process.pid}')
-
-        # 等待所有进程完成
-        print('爬取完成，现在回收任务进程...')
-        for process in processes:
-            process.join()
-        else:
-            print('回收任务进程完成')
-        print('正在等待上传工作')
-        event.set()
-        monitor.join(timeout = 5)
-        print('监控进程退出')
-        print(msg_q.empty(), event.is_set())
-        msg_q.task_done()
-        exit(0)
-        print(f'最后获取到了: {size.value} 条数据')
-
+for code in  tqdm.tqdm(country_code):
+    request_country_flag(code)

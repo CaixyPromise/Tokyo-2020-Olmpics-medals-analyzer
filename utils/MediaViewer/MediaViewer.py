@@ -117,32 +117,38 @@ class VideoViewer(ImageViewer):
 
 
 class MediaViewer:
+    image_viewer = None
+    video_viewer = None
+    gif_viewer = None
+
     def __init__(self, component):
         self.component = component
-        self.image_viewer = ImageViewer(self.component)
-        self.video_viewer = VideoViewer(self.component)
-        self.gif_viewer = AnimatedGifPlayer(self.component)
         self.__run = 0
 
     def show_image(self, image_path, size=None):
+        if self.image_viewer is None:
+            self.image_viewer = ImageViewer(self.component)
+
         self.image_viewer.show_image(image_path, size)
 
     def show_cv_image(self, cv_image):
+        if self.image_viewer is None:
+            self.image_viewer = ImageViewer(self.component)
         self.image_viewer.show_cv_image(cv_image)
 
     def show_video(self, video_path, size=None):
         self.__run = 1
+        self.video_viewer = VideoViewer(self.component)
         self.video_viewer.show_video(video_path, size)
 
     def show_animated_image(self, image_path, size = None):
         self.__run = 2
+        self.gif_viewer = AnimatedGifPlayer(self.component)
         self.gif_viewer.play_animation(image_path, size)
 
     def set_clean(self):
         self.component.config(image = '')
         if (self.__run == 1):
-
             self.video_viewer.stop_video()
         elif (self.__run == 2):
-
             self.gif_viewer.stop_animation()

@@ -1,6 +1,7 @@
 import tkinter.ttk as ttk
 import tkinter as tk
 from ui.utils.TreeviewUtils import TreeViewUtils
+from utils.MediaViewer.MediaViewer import  MediaViewer
 
 class AdminWindow(ttk.Frame):
     def __init__(self, parent, **kwargs):
@@ -10,19 +11,22 @@ class AdminWindow(ttk.Frame):
         banner_frame = tk.Frame(top_frame)
         banner_frame.pack(side = "left", fill = "x", expand = True)
         banner_label = tk.Label(banner_frame,
-                                text = "2020东京奥运会奖牌管理系统",
-                                font = ("Arial", 14),
-                                fg = "white", bg = "#007acc", anchor = "center"
+                                text = "2020东京奥运会奖牌管理系统 管理员",
+                                font = ("Arial", 14), anchor = "center"
                                 )
-        banner_label.pack(side = 'top', fill = 'x')
+        logo_label = tk.Label(banner_frame, anchor = "center")
+        logo_label.pack(side = "left",  fill = "y", expand = True)
+        MediaViewer(logo_label).show_image('static/image/Tokyo_2020both_Logo.png', (128, 70))
+        # 居中
+        banner_label.pack(side = 'left', fill = 'x',  expand = True)
 
         self.command_frame = ttk.LabelFrame(self, text = '控制台')
         self.command_frame.pack(side = 'left', fill = 'both', padx = 10, pady = 10,anchor = tk.NW)
         self.display_frame = tk.Frame(self,  width = 200)
         self.display_frame.pack_propagate(False)
-        self.display_frame.pack(side = 'right', expand = True, fill = 'both',
-                                padx = 10, pady = 10,anchor = tk.NW)
-        self.display_frame.configure(width = 900)
+        self.display_frame.pack(side = 'left', expand = True, fill = 'y',
+                                padx = 10, pady = 10,anchor = tk.NW, after = self.command_frame,)
+        self.display_frame.configure(width = 900, height =  900)
         self.display_frame.update_idletasks()
         self.setup_command()
         self.setup_display()
@@ -64,7 +68,7 @@ class AdminWindow(ttk.Frame):
         self.query_award_button.grid(row = 5, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
         # 增加/删除/修改/查询 账号：
         self.mannager_button = ttk.Button(self.command_frame, text = "管理账号")
-        self.mannager_button.grid(row = 6, column = 0, padx = 10, pady = 1, sticky = tk.NSEW)
+        self.mannager_button.grid(row = 6, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
         # 退出系统
         self.exit_button = ttk.Button(self.command_frame, text = "退出系统")
         self.exit_button.grid(row = 6, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
