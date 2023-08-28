@@ -16,6 +16,9 @@ class App(LoginWindow):
         self.__master = parent
         self.setup_login()
         self.__login_services = LoginServices()
+        self.textbox_uesrname.focus()
+        self.textbox_uesrname.insert(0, "admin")
+        self.textbox_password.insert(0, "admin")
 
     def login(self, event = None):
         username = self.textbox_uesrname.get()
@@ -57,8 +60,9 @@ class App(LoginWindow):
 
     def setup_login(self):
         self.show_psw.config(command = self.__show_psw)
-        self.login_Button.bind('<Return>', self.login)
+        self.login_Button.config(command =  self.login)
         self.textbox_password.bind('<Return>', self.login)
+
 
 def main():
     root = tk.Tk()

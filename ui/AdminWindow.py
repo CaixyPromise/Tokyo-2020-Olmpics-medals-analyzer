@@ -2,6 +2,14 @@ import tkinter.ttk as ttk
 import tkinter as tk
 from ui.utils.TreeviewUtils import TreeViewUtils
 from utils.MediaViewer.MediaViewer import  MediaViewer
+from  PIL import Image, ImageTk
+from tkinter import font
+def make_image(file, size = (33, 22)):
+    image = Image.open(file)
+    image = image.resize(size)
+    photo = ImageTk.PhotoImage(image)
+    return photo
+
 
 class AdminWindow(ttk.Frame):
     def __init__(self, parent, **kwargs):
@@ -28,8 +36,17 @@ class AdminWindow(ttk.Frame):
                                 padx = 10, pady = 10,anchor = tk.NW, after = self.command_frame,)
         self.display_frame.configure(width = 900, height =  900)
         self.display_frame.update_idletasks()
+
+        self.style = ttk.Style(self)
+
+        # 设置Treeview的字体和大小
+        self.tree_font = font.Font(family = "Helvetica", size = 16, )
+        self.style.configure("Treeview.Heading", font = self.tree_font )
+
         self.setup_command()
         self.setup_display()
+
+
 
     def setup_command(self):
         """
@@ -81,9 +98,10 @@ class AdminWindow(ttk.Frame):
         # 设置一个TreeViewUtils布局，用于显示比赛项目信息，列名：比赛ID、时间、地点、比赛名称、比赛类型，并插入到notebook中
         self.race_infoFrame = TreeViewUtils(self.team_info_frame,
                                             columns = ["比赛ID", "时间", "地点", "比赛名称", "比赛类型"],
-                                            show = 'headings')
+                                            show = 'headings',
+                                            )
         # self.race_infoFrame.grid(row = 0, column = 0, padx = 10, pady = 10)
-        self.scrollbar = ttk.Scrollbar(self.team_info_frame, orient = "vertical", command = self.race_infoFrame.yview)
+        self.scrollbar = ttk.Scrollbar(self.team_info_frame, command = self.race_infoFrame.yview)
         self.scrollbar.pack(side = 'right', fill = 'y')
         self.race_infoFrame.configure(yscrollcommand = self.scrollbar.set)
         self.notebook.add(self.team_info_frame, text = "比赛项目信息")
@@ -92,9 +110,33 @@ class AdminWindow(ttk.Frame):
         # 设置一个TreeViewUtils布局，用于显示奖牌榜信息：列名：排名、国家/地区、金牌、银牌、铜牌、总数
         self.medal_infoFrame = ttk.Frame(self.notebook)
         self.medal_infoFrame.pack(expand = True, fill = "both")
+        self.gold_img = make_image(file = "static/image/gold_medal.png")
+        self.silver_img = make_image(file = "static/image/silver_medal.png")
+        self.bronze_img = make_image(file = "static/image/bronze_medal.png")
+        custom_headings = {
+            "#0": {"text": "排名", "anchor": tk.CENTER},
+            "#1": {"text": "国家/地区", "anchor": tk.CENTER},
+            "#2": {"text": "金牌", "anchor": tk.CENTER, "image": self.gold_img},
+            "#3": {"text": "银牌", "anchor": tk.CENTER, "image": self.silver_img},
+            "#4": {"text": "铜牌", "anchor": tk.CENTER, "image": self.bronze_img},
+            "#5": {"text": "总数", "anchor": tk.CENTER}
+            }
+
+        custom_columns = {
+            "#0": {"minwidth": 10, "width": 100, "stretch": tk.YES, "anchor": 'center'},
+            "#1": {"minwidth": 20, "width": 100, "stretch": tk.YES, "anchor": 'center'},
+            "#2": {"minwidth": 5, "width": 100, "stretch": tk.YES, "anchor": 'center'},
+            "#3": {"minwidth": 5, "width": 100, "stretch": tk.YES, "anchor": 'center'},
+            "#4": {"minwidth": 5, "width": 100, "stretch": tk.YES, "anchor": 'center'},
+            "#5": {"minwidth": 5, "width": 100, "stretch": tk.YES, "anchor": 'center'}
+            }
+
         self.medal_tree = TreeViewUtils(self.medal_infoFrame,
                                         columns =  ["排名", "国家/地区", "金牌", "银牌", "铜牌", "总数"],
-                                        show = 'headings')
+                                        custom_headings = custom_headings,
+                                        custom_columns = custom_columns,
+                                        show = 'tree headings',
+                                        )
         self.medal_scrollbar = ttk.Scrollbar(self.medal_infoFrame, orient = "vertical", command = self.medal_tree.yview)
         self.medal_scrollbar.pack(side = 'right', fill = 'y')
         self.medal_tree.configure(yscrollcommand = self.medal_scrollbar.set)

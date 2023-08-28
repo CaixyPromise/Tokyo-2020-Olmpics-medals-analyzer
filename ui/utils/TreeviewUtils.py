@@ -1,14 +1,36 @@
 from tkinter.ttk import Treeview
+from PIL import Image, ImageTk
 
 class TreeViewUtils(Treeview):
-    def __init__(self, parent, column_width = 100, **args):
-        Treeview.__init__(self, parent, **args)
+    def __init__(self, parent,
+                 columns=None,
+                 custom_headings = None,
+                 custom_columns = None,
+                 column_width=100,
+                 **args):
+        Treeview.__init__(self, parent, columns=columns, **args)
 
-        self.pack(fill = 'both', expand = True)
-        for column in self['columns']:
-            self.column(column, width = column_width, anchor = 'center')
-            self.heading(column, text = column,
-                         )
+
+        self.pack(fill='both', expand=True)
+
+
+        if custom_columns:
+            for col, col_dict in custom_columns.items():
+                self.column(col, **col_dict)
+
+        if columns:
+            for col in columns:
+                self.column(col, width=column_width, anchor='center')
+                self.heading(col, text = col)
+
+        if custom_headings:
+            for col, col_dict in custom_headings.items():
+                self.heading(col, **col_dict)
+    def make_image(self, filepath, size = (33, 22)):
+        image = Image.open(filepath)
+        image = image.resize(size)
+        photo = ImageTk.PhotoImage(image)
+        return photo
 
     def config(self, item, value):
         self.config(item = item, value = value)
