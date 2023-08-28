@@ -50,3 +50,14 @@
 #     print("User not found.")
 #
 # conn.close()
+
+
+import ctypes
+
+class LoadDynamicLib:
+    def __init__(self, lib_path = 'utils/DS/DynamicLibaray.dll') -> None:
+        self.lib = ctypes.cdll.LoadLibrary(lib_path)
+        self.lib.init_arr()
+        self.lib.print_arr()
+
+LoadDynamicLib()

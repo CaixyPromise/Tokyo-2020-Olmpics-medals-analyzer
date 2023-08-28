@@ -13,10 +13,10 @@ class LoginWindow(ttk.Frame):
         canvas.create_image(0, 0, anchor = "nw", image = self.image_file)
         canvas.pack(side = "top")
 
-        textbox_uesrname = ttk.Entry(self, )
+        self.textbox_uesrname = ttk.Entry(self, )
         # 密码输入框
         self.textbox_password = ttk.Entry(self, show = "*")
-        textbox_uesrname.place(x = 160, y = 150)
+        self.textbox_uesrname.place(x = 160, y = 150)
         self.textbox_password.place(x = 160, y = 190)
 
         self.var = tk.IntVar(value = 0)

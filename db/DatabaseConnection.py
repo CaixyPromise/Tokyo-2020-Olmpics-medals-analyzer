@@ -1,7 +1,7 @@
 import sqlite3
 
 class DatabaseConnection:
-    def __init__(self, db_name):
+    def __init__(self, db_name = 'medalsDB'):
         self.db_name = db_name
         self.conn = None
 
