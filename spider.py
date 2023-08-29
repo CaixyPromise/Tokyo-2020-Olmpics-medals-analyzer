@@ -158,19 +158,28 @@ country_code = [i.get('countryid') for i in medals_List]
 
 
 # 爬取各国国旗图片：央视CCTV5 奖牌榜图片
-def request_country_flag(country_id):
-    url = f'https://p1.img.cctvpic.com/sports/data/olympic/teamImg/{country_id}.png'
-    image_response = requests.get(url)
-    if (image_response.status_code == 200):
-        image_bytes = image_response.content
-        image_name = f'static/image/flags/{country_id}.png'
-        with open(image_name, 'wb') as f:
-            f.write(image_bytes)
-        return (f'{image_name} 下载完成')
-    else:
-        return (f'{url} 下载失败')
+# def request_country_flag(country_id):
+#     url = f'https://p1.img.cctvpic.com/sports/data/olympic/teamImg/{country_id}.png'
+#     image_response = requests.get(url)
+#     if (image_response.status_code == 200):
+#         image_bytes = image_response.content
+#         image_name = f'static/image/flags/{country_id}.png'
+#         with open(image_name, 'wb') as f:
+#             f.write(image_bytes)
+#         return (f'{image_name} 下载完成')
+#     else:
+#         return (f'{url} 下载失败')
+#
+# import tqdm
+#
+# for code in  tqdm.tqdm(country_code):
+#     request_country_flag(code)
 
-import tqdm
-
-for code in  tqdm.tqdm(country_code):
-    request_country_flag(code)
+race_type =  ['TTE', 'BDM', 'FBL', 'BKB', 'BK3', 'VVO', 'VBV',
+                    'GLF', 'TEN', 'BSB', 'HOC', 'HBL', 'RUG', 'WPO',
+                    'SWM', 'DIV', 'OWS', 'SWA', 'WRE', 'TKW', 'JUD',
+                    'BOX', 'KTE', 'FEN', 'CRD', 'CTR', 'MTB', 'ATH',
+                    'TRI', 'MPN', 'GAR', 'GRY', 'GTR', 'ROW', 'SAL',
+                    'CSL', 'CSP', 'SKB', 'CLB', 'BMF', 'BMX', 'SHO',
+                    'ARC', 'WLF', 'EQU', 'SRF']
+url = 'https://api.cntv.cn/Olympic/getOlyMatchList?itemcode={race_id}-------------------------------&startdatecn=&venue=&country=&medal=&t=jsonp&cb=OM&serviceId=pcocean'

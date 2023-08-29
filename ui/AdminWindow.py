@@ -14,8 +14,18 @@ def make_image(file, size = (33, 22)):
 class AdminWindow(ttk.Frame):
     def __init__(self, parent, **kwargs):
         ttk.Frame.__init__(self, parent, **kwargs)
-        top_frame = tk.Frame(self)
-        top_frame.pack(side = "top", fill = "x")
+        self.setup_banner()
+        self.init_frame()
+        self.setup_command()
+        self.setup_display()
+
+    def setup_banner(self):
+        top_frame = ttk.Frame(self)
+        top_frame.grid(row = 0, column = 0, columnspan = 2, sticky = "WE")
+        top_frame.columnconfigure(0, weight = 1)
+        top_frame.rowconfigure(0, weight = 1)
+
+        # top_frame.pack(side = "top", fill = "x")
         banner_frame = tk.Frame(top_frame)
         banner_frame.pack(side = "left", fill = "x", expand = True)
         banner_label = tk.Label(banner_frame,
@@ -28,13 +38,17 @@ class AdminWindow(ttk.Frame):
         # 居中
         banner_label.pack(side = 'left', fill = 'x',  expand = True)
 
+    def init_frame(self):
         self.command_frame = ttk.LabelFrame(self, text = '控制台')
-        self.command_frame.pack(side = 'left', fill = 'both', padx = 10, pady = 10,anchor = tk.NW)
-        self.display_frame = tk.Frame(self,  width = 200)
-        self.display_frame.pack_propagate(False)
-        self.display_frame.pack(side = 'left', expand = True, fill = 'y',
-                                padx = 10, pady = 10,anchor = tk.NW, after = self.command_frame,)
-        self.display_frame.configure(width = 900, height =  900)
+        self.command_frame.grid(row = 1, column = 0, sticky = tk.NSEW, padx = 10, pady = 10)
+        # self.command_frame.pack(side = 'left', fill = 'both', padx = 10, pady = 10,anchor = tk.NW)
+        self.display_frame = ttk.Frame(self,  width = 200)
+        self.display_frame.grid(row = 1, column = 1, sticky = "NSEW", padx = 10, pady = 10)
+
+        # self.display_frame.pack_propagate(False)
+        # self.display_frame.pack(side = 'left', expand = True, fill = 'y',
+        #                         padx = 10, pady = 10,anchor = tk.NW, after = self.command_frame)
+        # self.display_frame.configure(width = 900, height =  900)
         self.display_frame.update_idletasks()
 
         self.style = ttk.Style(self)
@@ -42,11 +56,6 @@ class AdminWindow(ttk.Frame):
         # 设置Treeview的字体和大小
         self.tree_font = font.Font(family = "Helvetica", size = 16, )
         self.style.configure("Treeview.Heading", font = self.tree_font )
-
-        self.setup_command()
-        self.setup_display()
-
-
 
     def setup_command(self):
         """
@@ -92,20 +101,7 @@ class AdminWindow(ttk.Frame):
     def setup_display(self):
         # 设置一个Notebook结构
         self.notebook = ttk.Notebook(self.display_frame)
-        self.notebook.grid(row = 0, column = 0, padx = 10, pady = 10)
-        self.team_info_frame = ttk.Frame(self.notebook)
-        self.team_info_frame.pack(expand = True, fill = "both")
-        # 设置一个TreeViewUtils布局，用于显示比赛项目信息，列名：比赛ID、时间、地点、比赛名称、比赛类型，并插入到notebook中
-        self.race_infoFrame = TreeViewUtils(self.team_info_frame,
-                                            columns = ["比赛ID", "时间", "地点", "比赛名称", "比赛类型"],
-                                            show = 'headings',
-                                            )
-        # self.race_infoFrame.grid(row = 0, column = 0, padx = 10, pady = 10)
-        self.scrollbar = ttk.Scrollbar(self.team_info_frame, command = self.race_infoFrame.yview)
-        self.scrollbar.pack(side = 'right', fill = 'y')
-        self.race_infoFrame.configure(yscrollcommand = self.scrollbar.set)
-        self.notebook.add(self.team_info_frame, text = "比赛项目信息")
-        self.scrollbar.config(command = self.race_infoFrame.yview)
+        self.notebook.grid(row = 0, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
 
         # 设置一个TreeViewUtils布局，用于显示奖牌榜信息：列名：排名、国家/地区、金牌、银牌、铜牌、总数
         self.medal_infoFrame = ttk.Frame(self.notebook)
@@ -132,13 +128,29 @@ class AdminWindow(ttk.Frame):
             }
 
         self.medal_tree = TreeViewUtils(self.medal_infoFrame,
-                                        columns =  ["排名", "国家/地区", "金牌", "银牌", "铜牌", "总数"],
+                                        columns = ["排名", "国家/地区", "金牌", "银牌", "铜牌",],
                                         custom_headings = custom_headings,
                                         custom_columns = custom_columns,
-                                        show = 'tree headings',
+                                        show = "tree headings",
                                         )
         self.medal_scrollbar = ttk.Scrollbar(self.medal_infoFrame, orient = "vertical", command = self.medal_tree.yview)
         self.medal_scrollbar.pack(side = 'right', fill = 'y')
         self.medal_tree.configure(yscrollcommand = self.medal_scrollbar.set)
         self.medal_scrollbar.config(command = self.medal_tree.yview)
         self.notebook.add(self.medal_infoFrame, text = "奖牌榜")
+
+        self.team_info_frame = ttk.Frame(self.notebook)
+        self.team_info_frame.pack(expand = True, fill = "both")
+        # 设置一个TreeViewUtils布局，用于显示比赛项目信息，列名：比赛ID、时间、地点、比赛名称、比赛类型，并插入到notebook中
+        self.race_infoFrame = TreeViewUtils(self.team_info_frame,
+                                            columns = ["比赛ID", "时间", "地点", "比赛名称", "比赛类型"],
+                                            show = 'headings',
+                                            )
+        # self.race_infoFrame.grid(row = 0, column = 0, padx = 10, pady = 10)
+        self.scrollbar = ttk.Scrollbar(self.team_info_frame, command = self.race_infoFrame.yview)
+        self.scrollbar.pack(side = 'right', fill = 'y')
+        self.race_infoFrame.configure(yscrollcommand = self.scrollbar.set)
+        self.notebook.add(self.team_info_frame, text = "比赛项目信息")
+        self.scrollbar.config(command = self.race_infoFrame.yview)
+
+

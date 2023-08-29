@@ -13,15 +13,15 @@ class TreeViewUtils(Treeview):
 
         self.pack(fill='both', expand=True)
 
+        if columns:
+            for col in columns:
+                if custom_columns is None or col not in custom_columns:  # 添加这个检查
+                    self.column(col, width = column_width, anchor = 'center')
+                    self.heading(col, text = col)
 
         if custom_columns:
             for col, col_dict in custom_columns.items():
                 self.column(col, **col_dict)
-
-        if columns:
-            for col in columns:
-                self.column(col, width=column_width, anchor='center')
-                self.heading(col, text = col)
 
         if custom_headings:
             for col, col_dict in custom_headings.items():
