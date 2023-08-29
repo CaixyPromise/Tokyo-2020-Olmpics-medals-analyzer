@@ -54,20 +54,24 @@ class LoginServices:
         # 初始化数据库
         self.__db.connect()
 
-    @classmethod
-    def login(cls, response : LoginResponse):
-        result : list = cls.__db.query_user(LoginVerifyResponse(response.public_id))
-        if (result):
-            if (login_user(response.password, result[2])):
-                result = list(result)
-                config = UserConfig(_id = result[0],
-                                    username = result[1],
-                                    role = result[3],
-                                    group_id = result[4],
-                                    public_userid = result[5],
-                                    )
-                return config
-        return False
+    def query_user(self, response : LoginVerifyResponse):
+        return self.__db.query_user(response)
+
+
+    # @classmethod
+    # def login(cls, response : LoginResponse):
+        # result : list = cls.__db.query_user(LoginVerifyResponse(response.public_id))
+        # if (result):
+        #     if (login_user(response.password, result[2])):
+        #         result = list(result)
+        #         config = UserConfig(_id = result[0],
+        #                             username = result[1],
+        #                             role = result[3],
+        #                             group_id = result[4],
+        #                             public_userid = result[5],
+        #                             )
+        #         return config
+        # return False
 
     # @classmethod
     # def register(cls, public_userid):

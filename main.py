@@ -1,6 +1,7 @@
 import tkinter as tk
 from services.login import LoginServices
-from ui.AdminWindow import AdminWindow
+from controllers.Admin import AdminWindow
+from controllers.Login import LoginControllers
 from ui.LoginWindow import LoginWindow
 from tkinter.messagebox import showerror
 from response.login import LoginResponse
@@ -16,7 +17,7 @@ class App(LoginWindow):
         self.__screen_height = height
         self.__master = parent
         self.setup_login()
-        self.__login_services = LoginServices()
+        self.__login_services = LoginControllers()
         self.textbox_uesrname.focus()
         self.textbox_uesrname.insert(0, "admin")
         self.textbox_password.insert(0, "admin")
@@ -48,7 +49,7 @@ class App(LoginWindow):
 
     def enter_index(self, UserInfo):
         self.__user_ui = tk.Toplevel(self.__master)
-        self.index_frame = AdminWindow(self.__user_ui)
+        self.index_frame = AdminWindow(self.__user_ui, UserInfo)
         self.__user_ui.focus()
 
         self.index_frame.medal_tree.insert()

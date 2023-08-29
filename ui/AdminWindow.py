@@ -6,7 +6,7 @@ from  PIL import Image, ImageTk
 from tkinter import font
 from utils.make_image import make_image
 
-class AdminWindow(ttk.Frame):
+class AdminDialogWindow(ttk.Frame):
     def __init__(self, parent, **kwargs):
         ttk.Frame.__init__(self, parent, **kwargs)
         self.setup_banner()
@@ -149,9 +149,3 @@ class AdminWindow(ttk.Frame):
         self.scrollbar.config(command = self.race_infoFrame.yview)
 
 
-class AdminDialogWindow(AdminWindow):
-
-    def __init__(self, master, UserInfo, **kwargs):
-        super().__init__(master, **kwargs)
-
-    # def
