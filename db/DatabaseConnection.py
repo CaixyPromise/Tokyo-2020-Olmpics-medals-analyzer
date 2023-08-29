@@ -1,15 +1,19 @@
 import sqlite3
 
 class DatabaseConnection:
+    db_name = 'medalsDB'
     def __init__(self, db_name = 'medalsDB', init = True):
         self.db_name = db_name
         self.conn : sqlite3.connect = None
         if (init):
             self.connect()
+        else:
+            print('没有连接数据库, 调用connect()方法以连接数据库')
 
     def connect(self):
         self.conn = sqlite3.connect(self.db_name)
         return self.conn
+
     @property
     def cursor(self):
         if (self.conn is not None):
@@ -19,28 +23,41 @@ class DatabaseConnection:
 
     def init_table(self, sql):
         if (self.conn):
-            cur = self.conn.cursor()
-            cur.execute(sql)
-            self.conn.commit()
+            self.cursor.execute(sql)
+            self.commit()
         else:
             raise sqlite3.OperationalError('没有连接数据库')
 
-    def execute(self, sql, args = None, ret = False):
+    def execute(self, sql, args = None, ret = False, commit = False):
         if (self.conn):
-            self.cursor.execute(sql, args = args)
+            cur = self.cursor
+            if (args):
+                cur.execute(sql, args)
+            else:
+                cur.execute(sql)
+            if (commit):
+                cur.commit()
             if (ret): # if you need return something.
                 if (ret == 'all'):   # return all.
-                    return self.cursor.fetchall()
+                    return cur.fetchall()
                 elif (ret == 'one'): # return once.
-                    return self.cursor.fetchone()
+                    return cur.fetchone()
             else:
                 return True
         else:
             raise sqlite3.OperationalError('没有连接数据库')
+    def fetchall(self, cur):
+        return cur.fetchall()
 
-    def commit(self):
+    def fetchone(self, cur):
+        return cur.fetchone()
+
+    def fetchmany(self, cur, size = 1):
+        return cur.fetchmany(size)
+
+    def commit(self, cur):
         if (self.conn is not None):
-            self.conn.commit()
+            cur.commit()
             return True
         else:
             raise sqlite3.OperationalError('没有连接数据库')
@@ -48,3 +65,5 @@ class DatabaseConnection:
     def close(self):
         if self.conn:
             self.conn.close()
+        else:
+            raise sqlite3.OperationalError('没有连接数据库')

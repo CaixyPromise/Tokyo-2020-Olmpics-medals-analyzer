@@ -4,12 +4,7 @@ from ui.utils.TreeviewUtils import TreeViewUtils
 from utils.MediaViewer.MediaViewer import  MediaViewer
 from  PIL import Image, ImageTk
 from tkinter import font
-def make_image(file, size = (33, 22)):
-    image = Image.open(file)
-    image = image.resize(size)
-    photo = ImageTk.PhotoImage(image)
-    return photo
-
+from utils.make_image import make_image
 
 class AdminWindow(ttk.Frame):
     def __init__(self, parent, **kwargs):
@@ -154,3 +149,9 @@ class AdminWindow(ttk.Frame):
         self.scrollbar.config(command = self.race_infoFrame.yview)
 
 
+class AdminDialogWindow(AdminWindow):
+
+    def __init__(self, master, UserInfo, **kwargs):
+        super().__init__(master, **kwargs)
+
+    # def

@@ -1,6 +1,8 @@
-from db.DatabaseConnection import  DatabaseConnection
+from dataclasses import dataclass, asdict, fields, astuple
 
-class Medal_Rank:
+@dataclass
+class Medal_rank:
+    __tablename__ =  'medal_rank'
     rank : int
     countryname : str
     countryid : str
@@ -10,23 +12,15 @@ class Medal_Rank:
     count : int
     id : int
 
-    def __init__(self, rank = None,
-                 countryname = None,
-                 countryid = None,
-                 gold = None,
-                 silver = None,
-                 bronze = None, count = None, _id = None):
-        self.rank = rank
-        self.countryname = countryname
-        self.countryid = countryid
-        self.gold = gold
-        self.silver = silver
-        self.bronze = bronze
-        self.count = count
-        self.id = _id
+    def to_tuple(self):
+        return astuple(self)
+    def to_dict(self):
+        return asdict(self)
+    def to_list(self):
+        return [getattr(self, f.name) for f in fields(self)]
 
     def create_table(self):
-        sql = """create table medal_rank
+        sql = f"""create table {self.__tablename__}
 (
     rank        INTEGER not null,
     countryname TEXT,

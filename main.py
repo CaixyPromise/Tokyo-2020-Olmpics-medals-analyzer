@@ -3,7 +3,8 @@ from services.login import LoginServices
 from ui.AdminWindow import AdminWindow
 from ui.LoginWindow import LoginWindow
 from tkinter.messagebox import showerror
-
+from response.login import LoginResponse
+from services.medal_rank import MedalRankService
 
 class App(LoginWindow):
     __screen_width : int
@@ -23,9 +24,10 @@ class App(LoginWindow):
     def login(self, event = None):
         username = self.textbox_uesrname.get()
         password = self.textbox_password.get()
-        result =  self.__login_services.login(username, password)
+
+        result =  self.__login_services.login(LoginResponse(public_id = username, password = password))
         if result: # 密码正确
-            self.enter_index()
+            self.enter_index(result)
         else:   # 密码错误
             showerror(title = '错误', message = '用户名或密码错误')
             # 清空密码框
@@ -44,11 +46,12 @@ class App(LoginWindow):
         self.destroy()
         exit(0)
 
-    def enter_index(self):
+    def enter_index(self, UserInfo):
         self.__user_ui = tk.Toplevel(self.__master)
         self.index_frame = AdminWindow(self.__user_ui)
         self.__user_ui.focus()
 
+        self.index_frame.medal_tree.insert()
         self.index_frame.pack()
         self.__user_ui.protocol("WM_DELETE_WINDOW",
                              lambda : [self.__user_ui.destroy(), self.quit_system()])
