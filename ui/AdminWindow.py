@@ -98,9 +98,7 @@ class AdminDialogWindow(ttk.Frame):
         self.notebook = ttk.Notebook(self.display_frame)
         self.notebook.pack(fill = 'both', expand = True)
 
-        # 设置一个TreeViewUtils布局，用于显示奖牌榜信息：列名：排名、国家/地区、金牌、银牌、铜牌、总数
-        self.medal_infoFrame = ttk.Frame(self.notebook)
-        self.medal_infoFrame.pack(expand = True, fill = "both")
+        # 奖牌榜和金牌榜的图片资源和装饰元素
         self.gold_img = make_image(file = "static/image/gold_medal.png")
         self.silver_img = make_image(file = "static/image/silver_medal.png")
         self.bronze_img = make_image(file = "static/image/bronze_medal.png")
@@ -121,18 +119,39 @@ class AdminDialogWindow(ttk.Frame):
             "#4": {"minwidth": 5, "width": 100, "stretch": tk.YES, "anchor": 'center'},
             "#5": {"minwidth": 5, "width": 100, "stretch": tk.YES, "anchor": 'center'}
             }
-        self.medal_scrollbar = ttk.Scrollbar(self.medal_infoFrame, orient = "vertical",)
-        self.medal_scrollbar.pack(side = 'right', fill = 'y')
-        self.goldRank_tree = TreeViewUtils(self.medal_infoFrame,
+
+
+
+
+        # 设置一个TreeViewUtils布局，用于显示金牌榜信息：列名：排名、国家/地区、金牌、银牌、铜牌、总数
+        self.Goldmedal_infoFrame = ttk.Frame(self.notebook)
+        self.Goldmedal_infoFrame.pack(expand = True, fill = "both")
+        self.goldRank_scrollbar = ttk.Scrollbar(self.Goldmedal_infoFrame, orient = "vertical", )
+        self.goldRank_scrollbar.pack(side = 'right', fill = 'y')
+        self.goldRank_tree = TreeViewUtils(self.Goldmedal_infoFrame,
                                            columns = ["排名", "国家/地区", "金牌", "银牌", "铜牌",],
                                            custom_headings = custom_headings,
                                            custom_columns = custom_columns,
-                                           show = "tree headings",)
-        self.medal_scrollbar.config(command = self.goldRank_tree.yview)
-        self.goldRank_tree.configure(yscrollcommand = self.medal_scrollbar.set)
-        self.medal_scrollbar.config(command = self.goldRank_tree.yview)
+                                           show = "tree headings", )
+        self.goldRank_scrollbar.config(command = self.goldRank_tree.yview)
+        self.goldRank_tree.configure(yscrollcommand = self.goldRank_scrollbar.set)
+        self.goldRank_scrollbar.config(command = self.goldRank_tree.yview)
         self.goldRank_tree.update_idletasks()
-        self.notebook.add(self.medal_infoFrame, text = "金牌榜")
+        self.notebook.add(self.Goldmedal_infoFrame, text = "金牌榜")
+
+        # 设置一个TreeViewUtils布局，用于显示奖牌榜信息：列名：排名、国家/地区、金牌、银牌、铜牌、总数
+        self.medal_infoFrame = ttk.Frame(self.notebook)
+        self.medal_infoFrame.pack(expand = True, fill = "both")
+        self.MedalRank_scrollbar = ttk.Scrollbar(self.medal_infoFrame, orient = "vertical", )
+        self.MedalRank_scrollbar.pack(side = 'right', fill = 'y')
+        self.MedalRank_tree = TreeViewUtils(self.medal_infoFrame,
+                                           columns = ["排名", "国家/地区", "金牌", "银牌", "铜牌", ],
+                                           custom_headings = custom_headings,
+                                           custom_columns = custom_columns,
+                                           show = "tree headings", )
+        self.MedalRank_tree.configure(yscrollcommand = self.MedalRank_scrollbar.set)
+        self.MedalRank_scrollbar.config(command = self.MedalRank_tree.yview)
+        self.notebook.add(self.medal_infoFrame, text = "奖牌榜")
 
         self.team_info_frame = ttk.Frame(self.notebook)
         self.team_info_frame.pack(expand = True, fill = "both")
