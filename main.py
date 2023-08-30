@@ -52,7 +52,10 @@ class App(LoginWindow):
         self.index_frame = AdminWindow(self.__user_ui, UserInfo)
         self.__user_ui.focus()
 
-        self.index_frame.medal_tree.insert()
+        # print(MedalRankService().query_all_rank())
+        #
+        # self.index_frame.medal_tree.insert()
+
         self.index_frame.pack()
         self.__user_ui.protocol("WM_DELETE_WINDOW",
                              lambda : [self.__user_ui.destroy(), self.quit_system()])
