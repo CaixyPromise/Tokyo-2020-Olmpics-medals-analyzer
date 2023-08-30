@@ -1,13 +1,28 @@
 from ui.AdminWindow import AdminDialogWindow
-from typing import List, Optional
+from typing import List
 from response.rank import MedalRankData
 from services.medal_rank import MedalRankService
 from utils.make_image import make_image
 import tkinter as tk
+from ui.MannagerWindow import MannageDialogWindow
+from tkinter import Toplevel
+from models.enums import Column, ColumnName
+from ui.utils.functions import Ui_Function
+from ui.AskUserQuestionDialog import AskUserQuesionDialog
+
+class ButtonFunction(Ui_Function):
+    def __init__(self, parent):
+        super(ButtonFunction, self).__init__()
+
+    @staticmethod
+    def setup_add():
+        win = AskUserQuesionDialog()
+
 class AdminWindow(AdminDialogWindow):
 
     def add_image2Attr(self, name, image):
         setattr(self, name, make_image(image))
+
     def setup_image(self, Node : List[MedalRankData]):
         [self.add_image2Attr(val.countryid, val.flag) for val in Node]
 
@@ -15,6 +30,26 @@ class AdminWindow(AdminDialogWindow):
         super().__init__(master, **kwargs)
         self.get_db()
         self.init_medalRank()
+        self.init_button_function()
+
+    def setup_DialogWindow(self, columns, function):
+        win = Toplevel(self)
+        dialog = MannageDialogWindow( win ,
+                            columns =  columns,
+                            function = function,
+                            )
+        dialog.pack()
+        dialog.mainloop()
+
+    def init_button_function(self):
+
+        self.race_mannageBtn.config(command = lambda : self.setup_DialogWindow(Column.race, ColumnName.race))
+        self.team_mannageBtn.config(command = lambda : self.setup_DialogWindow(Column.team, ColumnName.team))
+        self.medal_mannageBtn.config(command = lambda : self.setup_DialogWindow(Column.medal, ColumnName.medal))
+        self.admin_mannageBtn.config(command = lambda : self.setup_DialogWindow(Column.admin, ColumnName.admin))
+
+    def get_db(self):
+        self.medal_rank = MedalRankService().query_all_rank()
 
     @staticmethod
     def init_glodRank(medal_rank):

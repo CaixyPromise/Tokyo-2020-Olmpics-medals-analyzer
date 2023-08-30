@@ -2,7 +2,6 @@ import tkinter.ttk as ttk
 import tkinter as tk
 from ui.utils.TreeviewUtils import TreeViewUtils
 from utils.MediaViewer.MediaViewer import  MediaViewer
-from  PIL import Image, ImageTk
 from tkinter import font
 from utils.make_image import make_image
 
@@ -62,37 +61,55 @@ class AdminDialogWindow(ttk.Frame):
         增加/删除/修改/查询国家队信息：与比赛项目信息操作类似。
         """
         # 增加比赛信息按钮, grid布局，self实例化，不绑定command参数
-        self.add_button = ttk.Button(self.command_frame, text = "增加比赛项目")
-        self.add_button.grid(row = 0, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
-        self.delete_button = ttk.Button(self.command_frame, text = "删除比赛项目")
-        self.delete_button.grid(row = 0, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
-        self.modify_button = ttk.Button(self.command_frame, text = "修改比赛项目")
-        self.modify_button.grid(row = 1, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
-        self.query_button = ttk.Button(self.command_frame, text = "查询比赛项目")
-        self.query_button.grid(row = 1, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
-        self.add_team_button = ttk.Button(self.command_frame, text = "增加国家队")
-        self.add_team_button.grid(row = 2, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
-        self.delete_team_button = ttk.Button(self.command_frame, text = "删除国家队")
-        self.delete_team_button.grid(row = 2, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
-        self.modify_team_button = ttk.Button(self.command_frame, text = "修改国家队")
-        self.modify_team_button.grid(row = 3, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
-        self.query_team_button = ttk.Button(self.command_frame, text = "查询国家队")
-        self.query_team_button.grid(row = 3, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
-        # 增加/删除/修改/查询 比赛项目获奖信息：与比赛项目信息操作类似。
-        self.add_award_button = ttk.Button(self.command_frame, text = "增加获奖信息")
-        self.add_award_button.grid(row = 4, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
-        self.delete_award_button = ttk.Button(self.command_frame, text = "删除获奖信息")
-        self.delete_award_button.grid(row = 4, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
-        self.modify_award_button = ttk.Button(self.command_frame, text = "修改获奖信息")
-        self.modify_award_button.grid(row = 5, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
-        self.query_award_button = ttk.Button(self.command_frame, text = "查询获奖信息")
-        self.query_award_button.grid(row = 5, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
-        # 增加/删除/修改/查询 账号：
-        self.mannager_button = ttk.Button(self.command_frame, text = "管理账号")
-        self.mannager_button.grid(row = 6, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
-        # 退出系统
-        self.exit_button = ttk.Button(self.command_frame, text = "退出系统")
-        self.exit_button.grid(row = 6, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
+        self.race_mannageBtn = ttk.Button(self.command_frame, text = "比赛项目管理")
+        self.race_mannageBtn.grid(row = 0, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
+        self.team_mannageBtn = ttk.Button(self.command_frame, text = "国家队管理")
+        self.team_mannageBtn.grid(row = 0, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
+        self.medal_mannageBtn = ttk.Button(self.command_frame, text = "奖牌项目管理")
+        self.medal_mannageBtn.grid(row = 1, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
+        self.admin_mannageBtn = ttk.Button(self.command_frame, text = "管理员管理")
+        self.admin_mannageBtn.grid(row = 1, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
+
+        logo_frame = tk.Frame(self.command_frame)
+        logo_frame.grid(row = 2, column = 0, columnspan = 2, padx = 10, pady = 10, sticky = tk.NSEW, rowspan = 2)
+        logo_label = tk.Label(logo_frame, anchor = "center")
+        logo_label.pack(side = "left", fill = "y", expand = True)
+        MediaViewer(logo_label).show_image('static/image/Tokyo_2020both_Logo.png', (204, 156))
+
+
+        # self.add_button = ttk.Button(self.command_frame, text = "增加比赛项目")
+        # self.add_button.grid(row = 0, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
+        # self.delete_button = ttk.Button(self.command_frame, text = "删除比赛项目")
+        # self.delete_button.grid(row = 0, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
+        # self.modify_button = ttk.Button(self.command_frame, text = "修改比赛项目")
+        # self.modify_button.grid(row = 1, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
+        # self.query_button = ttk.Button(self.command_frame, text = "查询比赛项目")
+        # self.query_button.grid(row = 1, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
+        #
+
+        # self.add_team_button = ttk.Button(self.command_frame, text = "增加国家队")
+        # self.add_team_button.grid(row = 2, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
+        # self.delete_team_button = ttk.Button(self.command_frame, text = "删除国家队")
+        # self.delete_team_button.grid(row = 2, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
+        # self.modify_team_button = ttk.Button(self.command_frame, text = "修改国家队")
+        # self.modify_team_button.grid(row = 3, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
+        # self.query_team_button = ttk.Button(self.command_frame, text = "查询国家队")
+        # self.query_team_button.grid(row = 3, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
+        # # 增加/删除/修改/查询 比赛项目获奖信息：与比赛项目信息操作类似。
+        # self.add_award_button = ttk.Button(self.command_frame, text = "增加获奖信息")
+        # self.add_award_button.grid(row = 4, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
+        # self.delete_award_button = ttk.Button(self.command_frame, text = "删除获奖信息")
+        # self.delete_award_button.grid(row = 4, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
+        # self.modify_award_button = ttk.Button(self.command_frame, text = "修改获奖信息")
+        # self.modify_award_button.grid(row = 5, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
+        # self.query_award_button = ttk.Button(self.command_frame, text = "查询获奖信息")
+        # self.query_award_button.grid(row = 5, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
+        # # 增加/删除/修改/查询 账号：
+        # self.mannager_button = ttk.Button(self.command_frame, text = "管理账号")
+        # self.mannager_button.grid(row = 6, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
+        # # 退出系统
+        # self.exit_button = ttk.Button(self.command_frame, text = "退出系统")
+        # self.exit_button.grid(row = 6, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
     def setup_display(self):
         # 设置一个Notebook结构
         self.notebook = ttk.Notebook(self.display_frame)
