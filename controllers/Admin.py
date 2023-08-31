@@ -9,14 +9,47 @@ from tkinter import Toplevel
 from models.enums import Column, ColumnName
 from ui.utils.functions import Ui_Function
 from ui.AskUserQuestionDialog import AskUserQuesionDialog
+from ui.utils.TreeviewUtils import TreeViewUtils
 
 class ButtonFunction(Ui_Function):
     def __init__(self, parent):
         super(ButtonFunction, self).__init__()
+        self.ret_val = tk.Variable()
+        self.parent = parent
 
     @staticmethod
-    def setup_add():
-        win = AskUserQuesionDialog()
+    def on_item_double_click(event, treeview):
+        item = treeview.selection()[0]  # 获取选中的项
+        col = treeview.identify_column(event.x)  # 获取鼠标点击的列
+
+        # 从列ID中获取列名（例如，从 '#1' 提取 '1'）
+        col = col.split('#')[-1]
+        col = int(col) - 1
+        col = treeview.cget("columns")[col]  # 从列列表中获取列名
+
+        # 获取该行该列的值
+        value = treeview.item(item, "values")[col]
+
+
+    def setup_team(self):
+        def add():
+            win = AskUserQuesionDialog(columns = Column.team.value,
+                                       name = '新增国家队管理员', return_val = self.ret_val)
+            win.wait_window()
+
+        def edit():
+            pass
+
+        def delete():
+            pass
+
+        def search():
+            pass
+
+        def reset():
+            pass
+
+
 
 class AdminWindow(AdminDialogWindow):
 
@@ -32,12 +65,54 @@ class AdminWindow(AdminDialogWindow):
         self.init_medalRank()
         self.init_button_function()
 
+
+    def get_treeInfo(self, event, treeview):
+        item = treeview.selection()[0]  # 获取选中的项
+        col = treeview.identify_column(event.x)  # 获取鼠标点击的列
+
+        # 从列ID中获取列名（例如，从 '#1' 提取 '1'）
+        col = col.split('#')[-1]
+        col = int(col) - 1
+        col = treeview.cget("columns")[col]  # 从列列表中获取列名
+
+        # 获取该行该列的值
+        value = treeview.item(item, "values")[col]
+
     def setup_DialogWindow(self, columns, function):
+        ret_val = tk.Variable()
+        def add():
+            add_win = AskUserQuesionDialog(columns = Column.team.value,
+                                       name = '新增国家队管理员', return_val = ret_val)
+            add_win.wait_window()
+
+        def edit(event, treeview):
+            item = treeview.selection()[0]  # 获取选中的项
+            col = treeview.identify_column(event.x)  # 获取鼠标点击的列
+
+            # 从列ID中获取列名（例如，从 '#1' 提取 '1'）
+            col = col.split('#')[-1]
+            col = int(col) - 1
+            col = treeview.cget("columns")[col]  # 从列列表中获取列名
+
+            # 获取该行该列的值
+            value = treeview.item(item, "values")[col]
+
+        def delete():
+            pass
+
+        def search():
+            pass
+
+
+        Button_event = ButtonFunction(self)
+
         win = Toplevel(self)
-        dialog = MannageDialogWindow( win ,
-                            columns =  columns,
-                            function = function,
-                            )
+        dialog = MannageDialogWindow(win,
+                                     columns =  columns,
+                                     app_name = function,
+                                     function_tool = Button_event
+                                     )
+
         dialog.pack()
         dialog.mainloop()
 
@@ -47,9 +122,6 @@ class AdminWindow(AdminDialogWindow):
         self.team_mannageBtn.config(command = lambda : self.setup_DialogWindow(Column.team, ColumnName.team))
         self.medal_mannageBtn.config(command = lambda : self.setup_DialogWindow(Column.medal, ColumnName.medal))
         self.admin_mannageBtn.config(command = lambda : self.setup_DialogWindow(Column.admin, ColumnName.admin))
-
-    def get_db(self):
-        self.medal_rank = MedalRankService().query_all_rank()
 
     @staticmethod
     def init_glodRank(medal_rank):
@@ -91,6 +163,7 @@ class AdminWindow(AdminDialogWindow):
 
     def init_medalRank(self):
         result = self.__medal_rank
+        
         for medal_node, gold_node in zip(self.__medal_rank, self.__gold_rank):
             self.MedalRank_tree.insert('', tk.END,
                                       text = (medal_node.rank),
@@ -109,4 +182,3 @@ class AdminWindow(AdminDialogWindow):
                                                  gold_node.silver,
                                                  gold_node.bronze,
                                                  gold_node.count))
-        # self.setup_image(self.__medal_rank.query_all_rank())
