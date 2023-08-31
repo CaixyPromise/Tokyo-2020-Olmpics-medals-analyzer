@@ -4,9 +4,22 @@ class Ui_Function:
     delete_function = "delete_function"
     edit_function = "edit_function"
     search_function = "search_function"
+    manny_function = "Insert Many Function"
 
-    def __init__(self, add = None, delete = None, edit = None, search = None):
-        self.add_function = add
-        self.delete_function = delete
-        self.edit_function = edit
-        self.search_function = search
+    def __init__(self, parent, **kwargs):
+        self.parent = parent
+        self.part = kwargs
+    def add(self):
+        pass
+
+    def remove(self):
+        pass
+
+    def edit(self):
+        pass
+
+    def search(self):
+        pass
+
+    def manny(self):
+        pass

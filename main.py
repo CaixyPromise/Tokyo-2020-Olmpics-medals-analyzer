@@ -1,11 +1,10 @@
 import tkinter as tk
-from services.login import LoginServices
-from controllers.Admin import AdminWindow
+from controllers.Admins.Admin import AdminWindow
 from controllers.Login import LoginControllers
 from ui.LoginWindow import LoginWindow
 from tkinter.messagebox import showerror
 from response.login import LoginResponse
-from services.medal_rank import MedalRankService
+
 
 class App(LoginWindow):
     __screen_width : int
@@ -32,7 +31,7 @@ class App(LoginWindow):
         else:   # 密码错误
             showerror(title = '错误', message = '用户名或密码错误')
             # 清空密码框
-            self.textbox_password.delete(0, 'end')
+            self.textbox_password.remove(0, 'end')
             self.textbox_password.focus() #  光标移到密码框
             self.textbox_password.update_idletasks() # 更新状态
 

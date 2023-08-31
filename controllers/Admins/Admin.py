@@ -8,46 +8,46 @@ from ui.MannagerWindow import MannageDialogWindow
 from tkinter import Toplevel
 from models.enums import Column, ColumnName
 from ui.utils.functions import Ui_Function
-from ui.AskUserQuestionDialog import AskUserQuesionDialog
-from ui.utils.TreeviewUtils import TreeViewUtils
-
-class ButtonFunction(Ui_Function):
-    def __init__(self, parent):
-        super(ButtonFunction, self).__init__()
-        self.ret_val = tk.Variable()
-        self.parent = parent
-
-    @staticmethod
-    def on_item_double_click(event, treeview):
-        item = treeview.selection()[0]  # 获取选中的项
-        col = treeview.identify_column(event.x)  # 获取鼠标点击的列
-
-        # 从列ID中获取列名（例如，从 '#1' 提取 '1'）
-        col = col.split('#')[-1]
-        col = int(col) - 1
-        col = treeview.cget("columns")[col]  # 从列列表中获取列名
-
-        # 获取该行该列的值
-        value = treeview.item(item, "values")[col]
-
-
-    def setup_team(self):
-        def add():
-            win = AskUserQuesionDialog(columns = Column.team.value,
-                                       name = '新增国家队管理员', return_val = self.ret_val)
-            win.wait_window()
-
-        def edit():
-            pass
-
-        def delete():
-            pass
-
-        def search():
-            pass
-
-        def reset():
-            pass
+from ui.AskUserQuestionWindow import AskUserQuestionDialog
+from services.Admin import AdminService
+from copy import deepcopy
+# class ButtonFunction(Ui_Function):
+#     def __init__(self, parent):
+#         super(ButtonFunction, self).__init__()
+#         self.ret_val = tk.Variable()
+#         self.parent = parent
+#
+#     @staticmethod
+#     def on_item_double_click(event, treeview):
+#         item = treeview.selection()[0]  # 获取选中的项
+#         col = treeview.identify_column(event.x)  # 获取鼠标点击的列
+#
+#         # 从列ID中获取列名（例如，从 '#1' 提取 '1'）
+#         col = col.split('#')[-1]
+#         col = int(col) - 1
+#         col = treeview.cget("columns")[col]  # 从列列表中获取列名
+#
+#         # 获取该行该列的值
+#         value = treeview.item(item, "values")[col]
+#
+#
+#     def setup_team(self):
+#         def add():
+#             win = AskUserQuestionDialog(columns = Column.team.value,
+#                                         name = '新增国家队管理员', return_val = self.ret_val)
+#             win.wait_window()
+#
+#         def edit():
+#             pass
+#
+#         def delete():
+#             pass
+#
+#         def search():
+#             pass
+#
+#         def reset():
+#             pass
 
 
 
@@ -61,6 +61,7 @@ class AdminWindow(AdminDialogWindow):
 
     def __init__(self, master, UserInfo, **kwargs):
         super().__init__(master, **kwargs)
+        self.__db = AdminService()
         self.get_db()
         self.init_medalRank()
         self.init_button_function()
@@ -81,9 +82,10 @@ class AdminWindow(AdminDialogWindow):
     def setup_DialogWindow(self, columns, function):
         ret_val = tk.Variable()
         def add():
-            add_win = AskUserQuesionDialog(columns = Column.team.value,
-                                       name = '新增国家队管理员', return_val = ret_val)
+            add_win = AskUserQuestionDialog(columns = Column.team.value,
+                                            name = '新增国家队管理员', return_val = ret_val)
             add_win.wait_window()
+
 
         def edit(event, treeview):
             item = treeview.selection()[0]  # 获取选中的项
@@ -104,17 +106,17 @@ class AdminWindow(AdminDialogWindow):
             pass
 
 
-        Button_event = ButtonFunction(self)
-
-        win = Toplevel(self)
-        dialog = MannageDialogWindow(win,
-                                     columns =  columns,
-                                     app_name = function,
-                                     function_tool = Button_event
-                                     )
-
-        dialog.pack()
-        dialog.mainloop()
+        # Button_event = ButtonFunction(self)
+        #
+        # win = Toplevel(self)
+        # dialog = MannageDialogWindow(win,
+        #                              columns =  columns,
+        #                              app_name = function,
+        #                              function_tool = Button_event
+        #                              )
+        #
+        # dialog.pack()
+        # dialog.mainloop()
 
     def init_button_function(self):
 
@@ -153,17 +155,15 @@ class AdminWindow(AdminDialogWindow):
             last_count = item.count
         return sorted_gold_rank
     def get_db(self):
-        self.__rank_db = MedalRankService()
         # 获取奖牌榜
-        self.__medal_rank = self.__rank_db.query_all_rank()
+        self.__medal_rank = self.__db.query_medal_rank()
         self.setup_image(self.__medal_rank)
-
-        # 根据奖牌榜排序获取金牌榜
-        self.__gold_rank = self.init_glodRank(self.__rank_db.query_all_rank())
+        # 根据奖牌榜排序获取金牌榜 --> 深拷贝
+        self.__gold_rank = self.init_glodRank(deepcopy(self.__medal_rank))
 
     def init_medalRank(self):
         result = self.__medal_rank
-        
+
         for medal_node, gold_node in zip(self.__medal_rank, self.__gold_rank):
             self.MedalRank_tree.insert('', tk.END,
                                       text = (medal_node.rank),

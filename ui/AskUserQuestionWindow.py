@@ -1,13 +1,13 @@
 from tkinter import Toplevel, ttk
 import tkinter as tk
 
-class AskUserQuesionDialog(Toplevel):
-    def __init__(self, name, return_val : tk.Variable, columns):
-        super(AskUserQuesionDialog, self).__init__()
+class AskUserQuestionDialog(Toplevel):
+    def __init__(self, name,  columns, return_val : tk.Variable = None ):
+        super(AskUserQuestionDialog, self).__init__()
         self.title(name)
         self.resizable(False, False)
         self.answer_dict = {}
-        self.return_val = return_val
+        self.result =  return_val
         self.columns = columns
 
         for row, column in enumerate(self.columns):
@@ -16,9 +16,14 @@ class AskUserQuesionDialog(Toplevel):
             tmp_entry.grid(row=row, column=1, padx = (10, 10), pady = (10, 10))
 
             self.answer_dict[column] = tmp_entry
-        self.submit_button = ttk.Button(self, text="Submit", command=self.submit)
+
+        self.submit_button = ttk.Button(self, text="提交", command=self.submit)
         self.submit_button.grid(row=len(self.columns)+1, column=0, columnspan=2, padx = (10, 10), pady = (10, 10))
 
     def submit(self):
-        self.return_val.set(self.answer_dict)
+        return_answer = [v.get() for v in self.answer_dict.values()]
+        if (isinstance(self.result, tk.Variable)):
+            self.result.set(return_answer)
+        else:
+            self.result = return_answer
         self.destroy()

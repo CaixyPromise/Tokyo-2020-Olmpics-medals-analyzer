@@ -3,10 +3,9 @@ from models.medal_Rank import Medal_rank
 from services.medal_rank import MedalRankService
 
 class AdminService(DatabaseConnection):
-    def __init__(self, username, userid):
+    def __init__(self):
         super(AdminService, self).__init__()
-        self.username = username
-        self.userid = userid
+
 
     def query_medal_rank(self):
         return MedalRankService().query_all_rank()
@@ -37,5 +36,3 @@ class AdminService(DatabaseConnection):
     # 批量新增比赛项目
     def insert_projectmany(self):
         pass
-
-    #
