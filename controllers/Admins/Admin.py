@@ -1,54 +1,15 @@
 from ui.AdminWindow import AdminDialogWindow
 from typing import List
 from response.rank import MedalRankData
-from services.medal_rank import MedalRankService
 from utils.make_image import make_image
 import tkinter as tk
-from ui.MannagerWindow import MannageDialogWindow
-from tkinter import Toplevel
 from models.enums import Column, ColumnName
-from ui.utils.functions import Ui_Function
 from ui.AskUserQuestionWindow import AskUserQuestionDialog
-from services.Admin import AdminService
+from services.Admins.Admin import AdminService
 from copy import deepcopy
-# class ButtonFunction(Ui_Function):
-#     def __init__(self, parent):
-#         super(ButtonFunction, self).__init__()
-#         self.ret_val = tk.Variable()
-#         self.parent = parent
-#
-#     @staticmethod
-#     def on_item_double_click(event, treeview):
-#         item = treeview.selection()[0]  # 获取选中的项
-#         col = treeview.identify_column(event.x)  # 获取鼠标点击的列
-#
-#         # 从列ID中获取列名（例如，从 '#1' 提取 '1'）
-#         col = col.split('#')[-1]
-#         col = int(col) - 1
-#         col = treeview.cget("columns")[col]  # 从列列表中获取列名
-#
-#         # 获取该行该列的值
-#         value = treeview.item(item, "values")[col]
-#
-#
-#     def setup_team(self):
-#         def add():
-#             win = AskUserQuestionDialog(columns = Column.team.value,
-#                                         name = '新增国家队管理员', return_val = self.ret_val)
-#             win.wait_window()
-#
-#         def edit():
-#             pass
-#
-#         def delete():
-#             pass
-#
-#         def search():
-#             pass
-#
-#         def reset():
-#             pass
-
+from tkinter import Toplevel
+from ui.MannagerWindow import MannageDialogWindow
+from services.Admins.command import RaceButtonCommand, TeamButtonCommand, MedalButtonCommand, AdminButtonCommand
 
 
 class AdminWindow(AdminDialogWindow):
@@ -81,42 +42,28 @@ class AdminWindow(AdminDialogWindow):
 
     def setup_DialogWindow(self, columns, function):
         ret_val = tk.Variable()
-        def add():
-            add_win = AskUserQuestionDialog(columns = Column.team.value,
-                                            name = '新增国家队管理员', return_val = ret_val)
-            add_win.wait_window()
 
+        match function:
+            case ColumnName.race:
+                Button_event = RaceButtonCommand(self, tree = self.race_infoFrame,)
+            case ColumnName.team:
+                Button_event = TeamButtonCommand(self, tree = self.team_infoFrame,)
+            case ColumnName.medal:
+                Button_event = MedalButtonCommand(self, tree = self.MedalRank_tree,)
+            case ColumnName.admin:
+                Button_event = AdminButtonCommand(self, tree = self.admin_infoFrame)
+            case _:
+                Button_event = None
 
-        def edit(event, treeview):
-            item = treeview.selection()[0]  # 获取选中的项
-            col = treeview.identify_column(event.x)  # 获取鼠标点击的列
+        win = Toplevel(self)
+        dialog = MannageDialogWindow(win,
+                                     columns =  columns,
+                                     app_name = function,
+                                     function_tool = Button_event
+                                     )
 
-            # 从列ID中获取列名（例如，从 '#1' 提取 '1'）
-            col = col.split('#')[-1]
-            col = int(col) - 1
-            col = treeview.cget("columns")[col]  # 从列列表中获取列名
-
-            # 获取该行该列的值
-            value = treeview.item(item, "values")[col]
-
-        def delete():
-            pass
-
-        def search():
-            pass
-
-
-        # Button_event = ButtonFunction(self)
-        #
-        # win = Toplevel(self)
-        # dialog = MannageDialogWindow(win,
-        #                              columns =  columns,
-        #                              app_name = function,
-        #                              function_tool = Button_event
-        #                              )
-        #
-        # dialog.pack()
-        # dialog.mainloop()
+        dialog.pack()
+        dialog.mainloop()
 
     def init_button_function(self):
 

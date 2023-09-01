@@ -1,35 +1,58 @@
 from ui.utils.functions import Ui_Function
 from ui.AskUserQuestionWindow import AskUserQuestionDialog
 from tkinter import messagebox
+from services.Admins.Admin import AdminService
+from models.competition import Competition
 
 class RaceButtonCommand(Ui_Function):
     def __init__(self, parent=None, **kwargs):
         super(RaceButtonCommand, self).__init__(parent, **kwargs)
+        self.__service = AdminService()
 
-    def add(self):
-        win = AskUserQuestionDialog(columns = self.part.get('columns'),
+    def add(self, **kwags):
+        column = {
+            '比赛ID' : {'type' : 'text'},
+            '比赛时间' : {'type' : 'time'},
+            '比赛地点': {'type': 'text'},
+            '比赛名称': {'type': 'text'},
+            '比赛类型': {'type': 'text'},
+            '比赛状态': {'type': 'combobox', 'value' : ('未开始', '已完成')},
+
+            }
+
+        win = AskUserQuestionDialog(columns = column,
                                     name = '新增比赛')
         win.wait_window()
         if win.result:
+            race_node = Competition(*win.result)
             # 提交数据库
-            pass
+            self.__service.insert_match(race_node)
+            messagebox.showinfo('提示', '添加成功')
+        else:
+            messagebox.showinfo('提示', '添加失败')
 
 
-    def remove(self):
-        pass
+    def remove(self, **kwags):
+        self.__service.delete_match(kwags.get('id'))
 
-    def edit(self):
-        pass
+    def modify(self, **kwags):
+        self.__service.modify_match(kwags.get('data'))
 
-    def manny(self):
-        pass
+    def manny(self, **kwags):
+        self.__service.insert_matchmany(kwags.get('data'))
 
 
 class TeamButtonCommand(Ui_Function):
     def __init__(self, parent = None, **kwargs):
         super(TeamButtonCommand, self).__init__(parent, **kwargs)
 
-    def add(self):
+    def add(self, **kwags):
+        # 新增队伍
+        columns = {
+            '国家名称' : 'text',
+            '国家代码' : 'text',
+            '总人数'   : 'text',
+            }
         win = AskUserQuestionDialog(columns = self.part.get('columns'),
                                     name = '新增队伍'
                                     )
@@ -38,13 +61,13 @@ class TeamButtonCommand(Ui_Function):
             # 提交数据库
             pass
 
-    def remove(self):
+    def remove(self, **kwags):
         pass
 
-    def edit(self):
+    def modify(self, **kwags):
         pass
 
-    def manny(self):
+    def manny(self, **kwags):
         pass
 
 
@@ -52,16 +75,16 @@ class MedalButtonCommand(Ui_Function):
     def __init__(self, parent = None, **kwargs):
         super(MedalButtonCommand, self).__init__(parent, **kwargs)
 
-    def add(self):
+    def add(self, **kwags):
         pass
 
-    def remove(self):
+    def remove(self, **kwags):
         pass
 
-    def edit(self):
+    def modify(self, **kwags):
         pass
 
-    def manny(self):
+    def manny(self, **kwags):
         pass
 
 
@@ -69,7 +92,7 @@ class AdminButtonCommand(Ui_Function):
     def __init__(self, parent = None, **kwargs):
         super(AdminButtonCommand, self).__init__(parent, **kwargs)
 
-    def add(self):
+    def add(self, **kwags):
         win = AskUserQuestionDialog(columns = self.part.get('columns'),
                                     name = '新增比赛'
                                     )
@@ -78,7 +101,7 @@ class AdminButtonCommand(Ui_Function):
             # 提交数据库
             pass
 
-    def remove(self):
+    def remove(self, **kwags):
         tree = self.part.get('tree')
         selected_rows = tree.selection() # 获取选中的行
         if not selected_rows:  # 如果没有选中的行，直接返回
@@ -89,7 +112,7 @@ class AdminButtonCommand(Ui_Function):
             for row in selected_rows:
                 tree.delete(row)  # 删除选中的行
 
-    def edit(self, event = None):
+    def modify(self, **kwags):
         treeview = self.part.get('tree')
         item = treeview.selection()[0]  # 获取选中的项
         col = treeview.identify_column(event.x)  # 获取鼠标点击的列
@@ -105,5 +128,5 @@ class AdminButtonCommand(Ui_Function):
         entry.delete(0, 'end')
         entry.insert(0, value)
 
-    def manny(self):
+    def manny(self, **kwags):
         pass

@@ -9,17 +9,17 @@ class Ui_Function:
     def __init__(self, parent, **kwargs):
         self.parent = parent
         self.part = kwargs
-    def add(self):
+    def add(self, **kwags):
         pass
 
-    def remove(self):
+    def remove(self, **kwags):
         pass
 
-    def edit(self):
+    def modify(self, **kwags):
         pass
 
-    def search(self):
+    def search(self, **kwags):
         pass
 
-    def manny(self):
+    def manny(self, **kwags):
         pass

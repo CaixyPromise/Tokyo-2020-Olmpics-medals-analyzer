@@ -95,55 +95,92 @@
 # if __name__ == "__main__":
 #     main()
 
+# import tkinter as tk
+# from tkinter import ttk
+# from PIL import Image, ImageTk
+#
+#
+# def open_image_file(file):
+#     image = Image.open(file)
+#     image = image.resize((33, 22))
+#     photo = ImageTk.PhotoImage(image)
+#     return photo
+# def main():
+#     root = tk.Tk()
+#     root.title("Olympics Medal Table")
+#     style = ttk.Style()
+#     # Set up the Treeview columns
+#     tree = ttk.Treeview(root, columns = ("Country", "Gold", "Silver", "Bronze", "Total"), show = 'tree headings')
+#     gold_img = open_image_file(file="static/image/gold_medal.png")
+#     silver_img = open_image_file(file="static/image/silver_medal.png")
+#     bronze_img = open_image_file(file="static/image/bronze_medal.png")
+#     # style.layout("Treeview.Heading", [
+#     #     ("Treeview.Heading.image", {"side": "left", "sticky": "", }),
+#     #     ("Treeview.Heading.cell", {"sticky": "nswe"}),
+#     #     ("Treeview.Heading.text", {"side": "left", "sticky": ""})
+#     #     ]
+#     #              )
+#     tree.heading("#0", text = "排名", anchor = tk.CENTER)
+#     tree.heading("#1", text = "国家/地区", anchor = tk.CENTER)
+#     tree.heading("#2", text = "金牌", anchor = tk.CENTER, image = gold_img, )
+#     tree.heading("#3", text = "银牌", anchor = tk.CENTER, image = silver_img)
+#     tree.heading("#4", text = "铜牌", anchor = tk.CENTER, image =  bronze_img)
+#     tree.heading("#5", text = "总数", anchor = tk.CENTER)
+#
+#     tree.column("#0", minwidth = 10, width = 100, stretch = tk.YES, anchor = 'center')
+#     tree.column("#1", minwidth = 20, width = 100, stretch = tk.YES, anchor = 'center')
+#     tree.column("#2", minwidth = 5, width = 100, stretch = tk.YES, anchor = 'center')
+#     tree.column("#3", minwidth = 5, width = 100, stretch = tk.YES, anchor = 'center')
+#     tree.column("#4", minwidth = 5, width = 100, stretch = tk.YES, anchor = 'center')
+#     tree.column("#5", minwidth = 5, width = 100, stretch = tk.YES, anchor = 'center')
+#
+#     # Insert sample data with flag images
+#     china_flag = open_image_file(file = "static/image/flags/CHN.png")
+#     usa_flag = open_image_file(file = "static/image/flags/USA.png")
+#
+#     tree.insert("", tk.END, text = "1", image = china_flag, values = ("China", 38, 32, 18, 88))
+#     tree.insert("", tk.END, text = "2", image = usa_flag, values = ("USA", 35, 28, 23, 86))
+#
+#     tree.pack()
+#     root.mainloop()
+#
+#
+# if __name__ == "__main__":
+#     main()
+
+
 import tkinter as tk
-from tkinter import ttk
-from PIL import Image, ImageTk
+import re
 
+def validate_time(char, value_if_allowed):
+    # 正则表达式用于匹配 24 小时制时间
+    pattern = re.compile(r'^(?:[01]?[0-9]|2[0-3]):[0-5][0-9]$')
 
-def open_image_file(file):
-    image = Image.open(file)
-    image = image.resize((33, 22))
-    photo = ImageTk.PhotoImage(image)
-    return photo
-def main():
-    root = tk.Tk()
-    root.title("Olympics Medal Table")
-    style = ttk.Style()
-    # Set up the Treeview columns
-    tree = ttk.Treeview(root, columns = ("Country", "Gold", "Silver", "Bronze", "Total"), show = 'tree headings')
-    gold_img = open_image_file(file="static/image/gold_medal.png")
-    silver_img = open_image_file(file="static/image/silver_medal.png")
-    bronze_img = open_image_file(file="static/image/bronze_medal.png")
-    # style.layout("Treeview.Heading", [
-    #     ("Treeview.Heading.image", {"side": "left", "sticky": "", }),
-    #     ("Treeview.Heading.cell", {"sticky": "nswe"}),
-    #     ("Treeview.Heading.text", {"side": "left", "sticky": ""})
-    #     ]
-    #              )
-    tree.heading("#0", text = "排名", anchor = tk.CENTER)
-    tree.heading("#1", text = "国家/地区", anchor = tk.CENTER)
-    tree.heading("#2", text = "金牌", anchor = tk.CENTER, image = gold_img, )
-    tree.heading("#3", text = "银牌", anchor = tk.CENTER, image = silver_img)
-    tree.heading("#4", text = "铜牌", anchor = tk.CENTER, image =  bronze_img)
-    tree.heading("#5", text = "总数", anchor = tk.CENTER)
+    # 判断时间格式是否合法
+    if pattern.fullmatch(value_if_allowed) or value_if_allowed == "":
+        return True
+    else:
+        return False
 
-    tree.column("#0", minwidth = 10, width = 100, stretch = tk.YES, anchor = 'center')
-    tree.column("#1", minwidth = 20, width = 100, stretch = tk.YES, anchor = 'center')
-    tree.column("#2", minwidth = 5, width = 100, stretch = tk.YES, anchor = 'center')
-    tree.column("#3", minwidth = 5, width = 100, stretch = tk.YES, anchor = 'center')
-    tree.column("#4", minwidth = 5, width = 100, stretch = tk.YES, anchor = 'center')
-    tree.column("#5", minwidth = 5, width = 100, stretch = tk.YES, anchor = 'center')
+# 初始化 Tkinter 应用
+root = tk.Tk()
+root.title("Time Entry")
 
-    # Insert sample data with flag images
-    china_flag = open_image_file(file = "static/image/flags/CHN.png")
-    usa_flag = open_image_file(file = "static/image/flags/USA.png")
+# 配置验证命令
+validate_command = root.register(validate_time)
+time_entry = tk.Entry(
+    root,
+    validate="key",
+    validatecommand=(validate_command, "%S", "%P")  # %S 是触发操作的字符，%P 是允许操作后的新值
+)
+time_entry.pack(pady=20)
 
-    tree.insert("", tk.END, text = "1", image = china_flag, values = ("China", 38, 32, 18, 88))
-    tree.insert("", tk.END, text = "2", image = usa_flag, values = ("USA", 35, 28, 23, 86))
+# 添加一个按钮，用于获取输入的时间
+def get_time():
+    entered_time = time_entry.get()
+    if entered_time:
+        print(f"Entered time is: {entered_time}")
 
-    tree.pack()
-    root.mainloop()
+tk.Button(root, text="Get Time", command=get_time).pack(pady=10)
 
-
-if __name__ == "__main__":
-    main()
+root.mainloop()

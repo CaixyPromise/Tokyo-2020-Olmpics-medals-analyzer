@@ -6,7 +6,7 @@ from tkinter import font
 from utils.make_image import make_image
 
 class MannageDialogWindow(ttk.Frame):
-    def __init__(self, parent, columns, app_name, init_data, function_tool, **kwargs):
+    def __init__(self, parent, columns, app_name, function_tool, init_data = None, **kwargs):
         super(MannageDialogWindow, self).__init__(parent, **kwargs)
         self.parent = parent
         self.columns = columns.value
@@ -21,7 +21,11 @@ class MannageDialogWindow(ttk.Frame):
         TODO: 根据传入的app身份参数，绑定特定的函数
         :return:
         """
-        self.add_button.config(command = lambda : self.function.add)
+        self.add_button.config(command =  self.function.add)
+        self.delete_button.config(command = self.function.remove)
+        self.modify_button.config(command = self.function.modify)
+        self.BacthAdd_button.config(command = self.function.manny)
+
 
     def setup_ui(self):
         left_frame = ttk.Frame(self)
@@ -36,8 +40,8 @@ class MannageDialogWindow(ttk.Frame):
         self.BacthAdd_button = ttk.Button(right_frame, text = f"批量添加{self.app}")
         self.BacthAdd_button.pack(padx = (10, 10), pady = (10, 10))
 
-        self.edit_button = ttk.Button(right_frame, text=f"修改{self.app}")
-        self.edit_button.pack(padx = (10, 10), pady = (10, 10))
+        self.modify_button = ttk.Button(right_frame, text= f"修改{self.app}")
+        self.modify_button.pack(padx = (10, 10), pady = (10, 10))
 
         self.delete_button = ttk.Button(right_frame, text=f"删除{self.app}")
         self.delete_button.pack(padx = (10, 10), pady = (10, 10))

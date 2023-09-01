@@ -23,8 +23,17 @@ class DatabaseConnection:
 
     def init_table(self, sql):
         if (self.conn):
-            self.cursor.execute(sql)
-            self.commit()
+            cur = self.cursor
+            cur.execute(sql)
+            self.commit(cur)
+        else:
+            raise sqlite3.OperationalError('没有连接数据库')
+
+    def execute_manny(self, sql, data):
+        if (self.conn):
+            cur = self.cursor
+            cur.executemany(sql, data)
+            self.commit(cur)
         else:
             raise sqlite3.OperationalError('没有连接数据库')
 

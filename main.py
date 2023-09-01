@@ -31,7 +31,7 @@ class App(LoginWindow):
         else:   # 密码错误
             showerror(title = '错误', message = '用户名或密码错误')
             # 清空密码框
-            self.textbox_password.remove(0, 'end')
+            self.textbox_password.remove()
             self.textbox_password.focus() #  光标移到密码框
             self.textbox_password.update_idletasks() # 更新状态
 
