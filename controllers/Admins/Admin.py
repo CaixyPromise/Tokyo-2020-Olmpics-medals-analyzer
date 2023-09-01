@@ -43,25 +43,33 @@ class AdminWindow(AdminDialogWindow):
     def setup_DialogWindow(self, columns, function):
         ret_val = tk.Variable()
 
-        match function:
-            case ColumnName.race:
-                Button_event = RaceButtonCommand(self, tree = self.race_infoFrame,)
-            case ColumnName.team:
-                Button_event = TeamButtonCommand(self, tree = self.team_infoFrame,)
-            case ColumnName.medal:
-                Button_event = MedalButtonCommand(self, tree = self.MedalRank_tree,)
-            case ColumnName.admin:
-                Button_event = AdminButtonCommand(self, tree = self.admin_infoFrame)
-            case _:
-                Button_event = None
+
 
         win = Toplevel(self)
         dialog = MannageDialogWindow(win,
                                      columns =  columns,
                                      app_name = function,
-                                     function_tool = Button_event
-                                     )
 
+                                     )
+        match function:
+            case ColumnName.race:
+                Button_event = RaceButtonCommand(self,
+                                                 tree = self.race_infoFrame,
+                                                 parent_tree = dialog.treeview)
+            case ColumnName.team:
+                Button_event = TeamButtonCommand(self, tree = self.team_infoFrame,
+                                                 parent_tree = dialog.treeview)
+            case ColumnName.medal:
+                Button_event = MedalButtonCommand(self,
+                                                  tree = self.MedalRank_tree,
+                                                  parent_tree = dialog.treeview)
+            case ColumnName.admin:
+                Button_event = AdminButtonCommand(self,
+                                                  tree = self.admin_infoFrame,
+                                                  parent_tree = dialog.treeview)
+            case _:
+                Button_event = None
+        dialog.setup_func(Button_event)
         dialog.pack()
         dialog.mainloop()
 
@@ -129,3 +137,10 @@ class AdminWindow(AdminDialogWindow):
                                                  gold_node.silver,
                                                  gold_node.bronze,
                                                  gold_node.count))
+
+        for race_node in self.__db.query_all_race():
+            self.race_infoFrame.insert('', tk.END,
+                                       values = (race_node.time, race_node.venue,
+                                                  race_node.competition_name,
+                                                  race_node.competition_type,
+                                                  race_node.status))

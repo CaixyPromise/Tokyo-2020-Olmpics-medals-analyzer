@@ -147,40 +147,35 @@
 #
 # if __name__ == "__main__":
 #     main()
-
-
 import tkinter as tk
-import re
+from tkcalendar import DateEntry
+from tkinter import ttk
 
-def validate_time(char, value_if_allowed):
-    # 正则表达式用于匹配 24 小时制时间
-    pattern = re.compile(r'^(?:[01]?[0-9]|2[0-3]):[0-5][0-9]$')
+def on_select():
+    selected_date = cal.get_date()
+    selected_time = f"{hour_spin.get()}:{minute_spin.get()}:{second_spin.get()}"
+    print(f"Selected date: {selected_date}")
+    print(f"Selected time: {selected_time}")
 
-    # 判断时间格式是否合法
-    if pattern.fullmatch(value_if_allowed) or value_if_allowed == "":
-        return True
-    else:
-        return False
-
-# 初始化 Tkinter 应用
 root = tk.Tk()
-root.title("Time Entry")
 
-# 配置验证命令
-validate_command = root.register(validate_time)
-time_entry = tk.Entry(
-    root,
-    validate="key",
-    validatecommand=(validate_command, "%S", "%P")  # %S 是触发操作的字符，%P 是允许操作后的新值
-)
-time_entry.pack(pady=20)
+# 创建 Calendar 控件
+cal = DateEntry(root, date_pattern='y-mm-dd', selectmode = 'readonly')
+cal.pack(padx=10, pady=10)
 
-# 添加一个按钮，用于获取输入的时间
-def get_time():
-    entered_time = time_entry.get()
-    if entered_time:
-        print(f"Entered time is: {entered_time}")
+# 创建 Spinbox 控件用于选择时间
+hour_spin = tk.Spinbox(root, from_=0, to=23, width=5, wrap = True, format="%02.0f")
+minute_spin = tk.Spinbox(root, from_=0, to=59, width=5, wrap = True, format="%02.0f")
+second_spin = tk.Spinbox(root, from_=0, to=59, width=5, wrap = True, format="%02.0f")
 
-tk.Button(root, text="Get Time", command=get_time).pack(pady=10)
+hour_spin.pack(side=tk.LEFT, padx=(10,0))
+tk.Label(root, text=":").pack(side=tk.LEFT)
+minute_spin.pack(side=tk.LEFT)
+tk.Label(root, text=":").pack(side=tk.LEFT)
+second_spin.pack(side=tk.LEFT, padx=(0,10))
+
+# 创建按钮用于获取选定的日期和时间
+btn = ttk.Button(root, text="Select", command=on_select)
+btn.pack(pady=10)
 
 root.mainloop()

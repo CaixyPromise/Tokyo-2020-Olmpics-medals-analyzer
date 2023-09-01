@@ -9,25 +9,42 @@ class RaceButtonCommand(Ui_Function):
         super(RaceButtonCommand, self).__init__(parent, **kwargs)
         self.__service = AdminService()
 
+
     def add(self, **kwags):
         column = {
             '比赛ID' : {'type' : 'text'},
             '比赛时间' : {'type' : 'time'},
-            '比赛地点': {'type': 'text'},
+            '比赛大项' : {'type' : 'text'},
             '比赛名称': {'type': 'text'},
+            '比赛地点': {'type': 'text'},
             '比赛类型': {'type': 'text'},
             '比赛状态': {'type': 'combobox', 'value' : ('未开始', '已完成')},
-
             }
+        self.tree = self.part.get('tree')
+        self.treeview = self.part.get('parent_tree')
+
 
         win = AskUserQuestionDialog(columns = column,
                                     name = '新增比赛')
         win.wait_window()
         if win.result:
+            print(win.result)
             race_node = Competition(*win.result)
-            # 提交数据库
+            print(race_node)
+            # # 提交数据库
             self.__service.insert_match(race_node)
             messagebox.showinfo('提示', '添加成功')
+            self.treeview.insert('', 'end', values = (race_node.time, race_node.venue,
+                                                  race_node.competition_name,
+                                                  race_node.competition_type,
+                                                  race_node.status,)
+                             )
+            self.tree.update()
+            self.tree.insert('', 'end', values=(race_node.time, race_node.venue,
+                                                race_node.competition_name,
+                                                race_node.competition_type,
+                                                race_node.status, ))
+            self.tree.update()
         else:
             messagebox.showinfo('提示', '添加失败')
 

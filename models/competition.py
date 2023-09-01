@@ -6,9 +6,10 @@ class Competition:
     __tablename__ = 'competitions'
     competition_id: str
     time: str
-    main_event: str
+    main_event: str # 比赛大项
     competition_name: str
-    venue: str
+    venue: str      # 比赛地点
+    competition_type : str # 比赛类型
     status: str
 
     def to_tuple(self):
@@ -27,7 +28,8 @@ class Competition:
     main_event TEXT NOT NULL,
     competition_name TEXT NOT NULL,
     venue TEXT NOT NULL,
-    status TEXT NOT NULL
+    status TEXT NOT NULL,
+    competition_type TEXT NOT NULL,    
 );
 
 CREATE INDEX idx_main_event ON {self.__tablename__}(main_event);"""

@@ -45,7 +45,8 @@ class DatabaseConnection:
             else:
                 cur.execute(sql)
             if (commit):
-                cur.commit()
+                self.commit(cur)
+                return True
             if (ret): # if you need return something.
                 if (ret == 'all'):   # return all.
                     return cur.fetchall()
@@ -66,7 +67,7 @@ class DatabaseConnection:
 
     def commit(self, cur):
         if (self.conn is not None):
-            cur.commit()
+            self.conn.commit()
             return True
         else:
             raise sqlite3.OperationalError('没有连接数据库')

@@ -16,6 +16,9 @@ class AdminService(DatabaseConnection):
     def query_medal_rank_by_CountryID(self, country_id):
         return self.__medal.query_rank_by_cid(country_id)
 
+    def query_all_race(self):
+        return self.__race.query_all_competitions()
+
     # 新增比赛
     def insert_match(self, competition):
         self.__race.insert_competition(competition)
