@@ -4,7 +4,8 @@ from controllers.Login import LoginControllers
 from ui.LoginWindow import LoginWindow
 from tkinter.messagebox import showerror
 from response.login import LoginResponse
-
+from utils.make_image import make_image
+from utils.GlobalStatic import GlobalResources
 
 class App(LoginWindow):
     __screen_width : int
@@ -15,6 +16,7 @@ class App(LoginWindow):
         self.__screen_width = width
         self.__screen_height = height
         self.__master = parent
+        self.__static = GlobalResources()
         self.setup_login()
         self.__login_services = LoginControllers()
         self.textbox_uesrname.focus()
@@ -47,13 +49,13 @@ class App(LoginWindow):
         exit(0)
 
     def enter_index(self, UserInfo):
+        self.__static['gold_img'] = make_image(file = "static/image/gold_medal.png")
+        self.__static['silver_img'] = make_image(file = "static/image/silver_medal.png")
+        self.__static['bronze_img'] = make_image(file = "static/image/bronze_medal.png")
+
         self.__user_ui = tk.Toplevel(self.__master)
         self.index_frame = AdminWindow(self.__user_ui, UserInfo)
         self.__user_ui.focus()
-
-        # print(MedalRankService().query_all_rank())
-        #
-        # self.index_frame.medal_tree.insert()
 
         self.index_frame.pack()
         self.__user_ui.protocol("WM_DELETE_WINDOW",

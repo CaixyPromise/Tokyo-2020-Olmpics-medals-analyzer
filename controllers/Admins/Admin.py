@@ -4,13 +4,12 @@ from response.rank import MedalRankData
 from utils.make_image import make_image
 import tkinter as tk
 from models.enums import Column, ColumnName
-from ui.AskUserQuestionWindow import AskUserQuestionDialog
 from services.Admins.Admin import AdminService
 from copy import deepcopy
 from tkinter import Toplevel
 from ui.MannagerWindow import MannageDialogWindow
 from services.Admins.command import RaceButtonCommand, TeamButtonCommand, MedalButtonCommand, AdminButtonCommand
-
+from utils.GlobalStatic import GlobalResources
 
 class AdminWindow(AdminDialogWindow):
 
@@ -23,52 +22,32 @@ class AdminWindow(AdminDialogWindow):
     def __init__(self, master, UserInfo, **kwargs):
         super().__init__(master, **kwargs)
         self.__db = AdminService()
+        self.__static = GlobalResources()
         self.get_db()
         self.init_medalRank()
         self.init_button_function()
 
-
-    def get_treeInfo(self, event, treeview):
-        item = treeview.selection()[0]  # 获取选中的项
-        col = treeview.identify_column(event.x)  # 获取鼠标点击的列
-
-        # 从列ID中获取列名（例如，从 '#1' 提取 '1'）
-        col = col.split('#')[-1]
-        col = int(col) - 1
-        col = treeview.cget("columns")[col]  # 从列列表中获取列名
-
-        # 获取该行该列的值
-        value = treeview.item(item, "values")[col]
-
     def setup_DialogWindow(self, columns, function):
         ret_val = tk.Variable()
-
-
 
         win = Toplevel(self)
         dialog = MannageDialogWindow(win,
                                      columns =  columns,
                                      app_name = function,
-
+                                     init_data = self.__db.query_all_race(),
                                      )
         match function:
             case ColumnName.race:
-                Button_event = RaceButtonCommand(self,
-                                                 tree = self.race_infoFrame,
-                                                 parent_tree = dialog.treeview)
+                Button_event = RaceButtonCommand(dialog, tree = self.race_infoFrame)
             case ColumnName.team:
-                Button_event = TeamButtonCommand(self, tree = self.team_infoFrame,
-                                                 parent_tree = dialog.treeview)
+                Button_event = TeamButtonCommand(dialog, tree = self.team_infoFrame)
             case ColumnName.medal:
-                Button_event = MedalButtonCommand(self,
-                                                  tree = self.MedalRank_tree,
-                                                  parent_tree = dialog.treeview)
+                Button_event = MedalButtonCommand(dialog, tree = self.MedalRank_tree)
             case ColumnName.admin:
-                Button_event = AdminButtonCommand(self,
-                                                  tree = self.admin_infoFrame,
-                                                  parent_tree = dialog.treeview)
+                Button_event = AdminButtonCommand(dialog, tree = self.admin_infoFrame)
             case _:
                 Button_event = None
+
         dialog.setup_func(Button_event)
         dialog.pack()
         dialog.mainloop()
@@ -109,38 +88,16 @@ class AdminWindow(AdminDialogWindow):
             last_gold = item.gold
             last_count = item.count
         return sorted_gold_rank
+
     def get_db(self):
         # 获取奖牌榜
         self.__medal_rank = self.__db.query_medal_rank()
-        self.setup_image(self.__medal_rank)
+        self.__static['flags'] = {val.countryid : make_image(val.flag) for val in self.__medal_rank}
         # 根据奖牌榜排序获取金牌榜 --> 深拷贝
         self.__gold_rank = self.init_glodRank(deepcopy(self.__medal_rank))
 
     def init_medalRank(self):
         result = self.__medal_rank
-
-        for medal_node, gold_node in zip(self.__medal_rank, self.__gold_rank):
-            self.MedalRank_tree.insert('', tk.END,
-                                      text = (medal_node.rank),
-                                      image = getattr(self, medal_node.countryid),
-                                      values = (medal_node.countryname,
-                                             medal_node.gold,
-                                             medal_node.silver,
-                                             medal_node.bronze,
-                                             medal_node.count)
-                                      )
-            self.goldRank_tree.insert('', tk.END,
-                                       text = (gold_node.rank),
-                                       image = getattr(self, gold_node.countryid),
-                                       values = (gold_node.countryname,
-                                                 gold_node.gold,
-                                                 gold_node.silver,
-                                                 gold_node.bronze,
-                                                 gold_node.count))
-
-        for race_node in self.__db.query_all_race():
-            self.race_infoFrame.insert('', tk.END,
-                                       values = (race_node.time, race_node.venue,
-                                                  race_node.competition_name,
-                                                  race_node.competition_type,
-                                                  race_node.status))
+        self.MedalRank_tree.insert_manny(self.__medal_rank)
+        self.goldRank_tree.insert_manny(self.__gold_rank)
+        self.race_infoFrame.insert_manny(self.__db.query_all_race())

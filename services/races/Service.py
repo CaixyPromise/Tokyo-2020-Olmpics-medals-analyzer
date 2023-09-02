@@ -32,11 +32,19 @@ class CompetitionsService(DatabaseConnection):
 
     def delete_competition_by_id(self, competition_id):
         sql = f"DELETE FROM {self.__tablename__} WHERE competition_id=?"
-        self.execute(sql, args=(competition_id,))
+
+        self.execute(sql, args=(competition_id,), commit = True)
 
     def query_all_competitions(self):
         sql = f"SELECT * FROM {self.__tablename__}"
-        fetch_result = [Competition(*v) for v in self.execute(sql, ret='all')]
+        fetch_result = [Competition(competition_id = v[0],
+                                    time = v[1],
+                                    main_event = v[2],
+                                    competition_name = v[3],
+                                    venue = v[4],
+                                    status = v[5],
+                                    competition_type = v[6]) for v in self.execute(sql, ret='all')]
+        print(fetch_result)
         return fetch_result
 
     def query_competition_by_id(self, competition_id):

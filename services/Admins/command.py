@@ -8,7 +8,8 @@ class RaceButtonCommand(Ui_Function):
     def __init__(self, parent=None, **kwargs):
         super(RaceButtonCommand, self).__init__(parent, **kwargs)
         self.__service = AdminService()
-
+        self.tree = self.part.get('tree')
+        self.treeview = self.parent.treeview
 
     def add(self, **kwags):
         column = {
@@ -20,17 +21,14 @@ class RaceButtonCommand(Ui_Function):
             '比赛类型': {'type': 'text'},
             '比赛状态': {'type': 'combobox', 'value' : ('未开始', '已完成')},
             }
-        self.tree = self.part.get('tree')
-        self.treeview = self.part.get('parent_tree')
+
 
 
         win = AskUserQuestionDialog(columns = column,
                                     name = '新增比赛')
         win.wait_window()
         if win.result:
-            print(win.result)
             race_node = Competition(*win.result)
-            print(race_node)
             # # 提交数据库
             self.__service.insert_match(race_node)
             messagebox.showinfo('提示', '添加成功')
@@ -43,14 +41,19 @@ class RaceButtonCommand(Ui_Function):
             self.tree.insert('', 'end', values=(race_node.time, race_node.venue,
                                                 race_node.competition_name,
                                                 race_node.competition_type,
-                                                race_node.status, ))
+                                                race_node.status))
             self.tree.update()
         else:
             messagebox.showinfo('提示', '添加失败')
-
-
     def remove(self, **kwags):
-        self.__service.delete_match(kwags.get('id'))
+        selection = self.parent.get_choice_RowData('all')
+        if (selection is not None):
+            _id = selection[0]
+            if (messagebox.askyesno('确认', '确定删除？')):
+                self.__service.delete_match(_id)
+            self.treeview.delete(selection[0])
+            self.treeview.update()
+        return
 
     def modify(self, **kwags):
         self.__service.modify_match(kwags.get('data'))

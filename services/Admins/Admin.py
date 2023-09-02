@@ -1,8 +1,7 @@
 from db.DatabaseConnection import DatabaseConnection
-from models.medal_Rank import Medal_rank
-from services.medal_rank import MedalRankService
-from services.race import CompetitionsService
-from models.competition import Competition
+from services.rank.Service import MedalRankService
+from services.races.Service import CompetitionsService
+
 
 class AdminService(DatabaseConnection):
     def __init__(self):
