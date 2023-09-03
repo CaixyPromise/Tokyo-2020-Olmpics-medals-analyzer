@@ -154,8 +154,7 @@ from tkinter import ttk
 def on_select():
     selected_date = cal.get_date()
     selected_time = f"{hour_spin.get()}:{minute_spin.get()}:{second_spin.get()}"
-    print(f"Selected date: {selected_date}")
-    print(f"Selected time: {selected_time}")
+
 
 root = tk.Tk()
 

@@ -55,7 +55,10 @@ class LoginServices:
         self.__db.connect()
 
     def query_user(self, response : LoginVerifyResponse):
-        return self.__db.query_user(response)
+        result = self.__db.Verify_user(response)
+        self.__db.close()
+        return result
+
 
 
     # @classmethod

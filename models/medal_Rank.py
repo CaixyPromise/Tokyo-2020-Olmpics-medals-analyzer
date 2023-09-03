@@ -1,4 +1,4 @@
-from dataclasses import dataclass, asdict, fields, astuple
+from dataclasses import dataclass, asdict, fields, astuple, field
 
 @dataclass
 class Medal_rank:
@@ -10,7 +10,6 @@ class Medal_rank:
     silver : int
     bronze : int
     count : int
-    id : int
 
     def to_tuple(self):
         return astuple(self)
@@ -24,14 +23,13 @@ class Medal_rank:
 (
     rank        INTEGER not null,
     countryname TEXT,
-    countryid   TEXT,
+    countryid   TEXT
+        primary key
+        unique,
     gold        INTEGER,
     silver      INTEGER,
     bronze      INTEGER,
-    count       INTEGER,
-    id          INTEGER not null
-        primary key autoincrement
-        unique
+    count       INTEGER
 );
 
 create index medal_rank_countryid_index

@@ -6,7 +6,7 @@ class DatabaseConnection:
         self.db_name = db_name
         self.conn : sqlite3.connect = None
         if (init):
-            self.connect()
+            self.conn = self.connect()
         else:
             print('没有连接数据库, 调用connect()方法以连接数据库')
 

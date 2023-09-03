@@ -17,26 +17,29 @@ class RankTreeview(TreeViewUtils):
         self.__custom_headings = {
             "#0": {"text": "排名", "anchor": tk.CENTER},
             "#1": {"text": "国家/地区", "anchor": tk.CENTER},
-            "#2": {"text": "金牌", "anchor": tk.CENTER, "image": self.gold_img},
-            "#3": {"text": "银牌", "anchor": tk.CENTER, "image": self.silver_img},
-            "#4": {"text": "铜牌", "anchor": tk.CENTER, "image": self.bronze_img},
-            "#5": {"text": "总数", "anchor": tk.CENTER}
+            "#2": {"text": "国家/地区代码", "anchor": tk.CENTER},
+            "#3": {"text": "金牌", "anchor": tk.CENTER, "image": self.gold_img},
+            "#4": {"text": "银牌", "anchor": tk.CENTER, "image": self.silver_img},
+            "#5": {"text": "铜牌", "anchor": tk.CENTER, "image": self.bronze_img},
+            "#6": {"text": "总数", "anchor": tk.CENTER}
             }
 
         self.__custom_columns = {
             "#0": {"minwidth": 10, "width": 100, "stretch": tk.YES, "anchor": 'center'},
             "#1": {"minwidth": 20, "width": 100, "stretch": tk.YES, "anchor": 'center'},
-            "#2": {"minwidth": 5, "width": 100, "stretch": tk.YES, "anchor": 'center'},
+            "#2": {"minwidth": 5, "width": 130, "stretch": tk.YES, "anchor": 'center'},
             "#3": {"minwidth": 5, "width": 100, "stretch": tk.YES, "anchor": 'center'},
             "#4": {"minwidth": 5, "width": 100, "stretch": tk.YES, "anchor": 'center'},
-            "#5": {"minwidth": 5, "width": 100, "stretch": tk.YES, "anchor": 'center'}
+            "#5": {"minwidth": 5, "width": 100, "stretch": tk.YES, "anchor": 'center'},
+            "#6": {"minwidth": 5, "width": 100, "stretch": tk.YES, "anchor": 'center'}
+
             }
 
     def __init__(self, parent):
         self.__init__static_data()
         self.__static = GlobalResources()
         super(RankTreeview, self).__init__(parent = parent,
-                                              columns = ("排名", "国家/地区", "金牌", "银牌", "铜牌"),
+                                              columns = ("排名", "国家/地区", "国家/地区代码", "金牌", "银牌", "铜牌"),
                                               custom_headings = self.__custom_headings,
                                               custom_columns = self.__custom_columns,
                                               show = "tree headings",
@@ -52,6 +55,7 @@ class RankTreeview(TreeViewUtils):
     def __insert(self, medal_node):
         flag = self.__static['flags'].get(medal_node.countryid, None)
         self.insert_data(values = (medal_node.countryname,
+                                   medal_node.countryid,
                                    medal_node.gold,
                                    medal_node.silver,
                                    medal_node.bronze,

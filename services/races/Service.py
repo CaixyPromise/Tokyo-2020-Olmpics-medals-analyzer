@@ -46,7 +46,6 @@ class CompetitionsService(DatabaseConnection):
         return None
 
     def update_competition_by_id(self, competition):
-        print(f'competion: {competition}')
         sql = f"""UPDATE {self.__tablename__} SET time=?, main_event=?, 
                   competition_name=?, competition_type=?, venue=?,  status=? WHERE competition_id=?"""
         return self.execute(sql, args = (competition.time,

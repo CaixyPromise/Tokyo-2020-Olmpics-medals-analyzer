@@ -18,6 +18,7 @@ class LoginControllers:
                                     role = result[3],
                                     group_id = result[4],
                                     public_userid = result[5],
+                                    user_contact = result[6],
                                     )
                 return config
         return False

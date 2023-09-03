@@ -25,7 +25,6 @@ class NationalTeamService(DatabaseConnection):
         sql = f"""INSERT INTO {self.__tablename__} (country_code, country_name, team_size, 
                   manager_name, manager_contact, manager_identity) VALUES (?, ?, ?, ?, ?, ?)"""
         data = [team.to_tuple() for team in teams]
-        print(data)
         self.execute_manny(sql, data)
 
     def delete_team_by_code(self, country_code):
@@ -34,9 +33,8 @@ class NationalTeamService(DatabaseConnection):
 
     def query_all_teams(self):
         sql = f"SELECT * FROM {self.__tablename__}"
-        fetch_result = [NationalTeam(*v) for v in self.execute(sql, ret = 'all')]
-        print(fetch_result)
-        return fetch_result
+
+        return [NationalTeam(*v) for v in self.execute(sql, ret = 'all')]
 
     def query_team_by_code(self, country_code):
         sql = f"SELECT * FROM {self.__tablename__} WHERE country_code=?"

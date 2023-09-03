@@ -1,9 +1,7 @@
 from ui.AdminWindow import AdminDialogWindow
-from typing import List
-from response.rank import MedalRankResponse
 from utils.make_image import make_image
 import tkinter as tk
-from models.enums import Column, ColumnName
+from models.enums import ColumnName
 from services.Admins.Admin import AdminService
 from copy import deepcopy
 from tkinter import Toplevel
@@ -14,14 +12,8 @@ from ui.common.RankTreeview import RankTreeview
 from ui.common.RaceTreeview import RaceTreeview
 from ui.common.TeamTreeview import TeamTreeview
 from ui.common.AdminTreeview import AdminTreeview
+
 class AdminWindow(AdminDialogWindow):
-
-    def add_image2Attr(self, name, image):
-        setattr(self, name, make_image(image))
-
-    def setup_image(self, Node : List[MedalRankResponse]):
-        [self.add_image2Attr(val.countryid, val.flag) for val in Node]
-
     def __init__(self, master, UserInfo, **kwargs):
         super().__init__(master, **kwargs)
         self.__db = AdminService()
@@ -61,7 +53,7 @@ class AdminWindow(AdminDialogWindow):
         self.race_mannageBtn.config(command = lambda : self.setup_DialogWindow(self.__db.query_all_race(), ColumnName.race))
         self.team_mannageBtn.config(command = lambda : self.setup_DialogWindow(self.__db.query_all_team(), ColumnName.team))
         self.medal_mannageBtn.config(command = lambda : self.setup_DialogWindow(self.__db.query_medal_rank(), ColumnName.medal))
-        self.admin_mannageBtn.config(command = lambda : self.setup_DialogWindow(Column.admin, ColumnName.admin))
+        self.admin_mannageBtn.config(command = lambda : self.setup_DialogWindow(self.__db.query_admin(), ColumnName.admin))
 
     @staticmethod
     def init_glodRank(medal_rank):
@@ -106,3 +98,4 @@ class AdminWindow(AdminDialogWindow):
         self.goldRank_tree.insert_manny(self.__gold_rank)
         self.race_tree.insert_manny(self.__db.query_all_race())
         self.team_tree.insert_manny(self.__db.query_all_team())
+        self.admin_tree.insert_manny(self.__db.query_admin())

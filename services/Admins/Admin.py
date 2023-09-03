@@ -2,6 +2,7 @@ from db.DatabaseConnection import DatabaseConnection
 from services.rank.Service import MedalRankService
 from services.races.Service import CompetitionsService
 from services.team.Service import NationalTeamService
+from services.user import  UserService
 
 
 class AdminService(DatabaseConnection):
@@ -10,6 +11,24 @@ class AdminService(DatabaseConnection):
         self.__medal = MedalRankService()
         self.__race = CompetitionsService()
         self.__team = NationalTeamService()
+        self.__user = UserService()
+
+    def insert_coutryAdmin(self, coutryID, contact):
+        self.__user.make_coutryAdmin(coutryID, contact)
+
+    def insert_Adminuser(self, usernode):
+        self.__user.inser_user(usernode)
+
+    def insert_mannyAdmin(self, dataList):
+        self.__user.insert_mannyAdmin(dataList)
+
+    def modify_admin(self, response):
+        self.__user.modify_admin(response)
+    def query_admin(self):
+        return  self.__user.query_admin()
+
+    def delete_admin(self, delete_node):
+        return self.__user.delete_admin(delete_node)
 
     def query_medal_rank(self):
         return self.__medal.query_all_rank()
@@ -19,6 +38,12 @@ class AdminService(DatabaseConnection):
 
     def query_all_race(self):
         return self.__race.query_all_competitions()
+
+    def insert_medal(self, medalNode):
+        return self.__medal.insert_medal_rank(medalNode)
+
+    def modify_medal(self, medalNode):
+        return self.__medal.modify_medal_info(medalNode)
 
     # 新增比赛
     def insert_match(self, competition):

@@ -35,6 +35,8 @@ class ReadTemplate:
 
         # 检查列名是否匹配
         if tuple(first_row) != columns:
+            print(first_row)
+            print(columns)
             raise Exception('列名不匹配，请检查模板')
 
         for row in self.ws.iter_rows(min_row=2, values_only=True):  # 跳过列名
