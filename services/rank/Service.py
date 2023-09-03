@@ -1,6 +1,5 @@
 from db.DatabaseConnection import DatabaseConnection
-from models.medal_Rank import Medal_rank
-from response.rank import MedalRankData
+from response.rank import MedalRankResponse
 
 class MedalRankService(DatabaseConnection):
     __tablename__ = "medal_rank"
@@ -12,10 +11,10 @@ class MedalRankService(DatabaseConnection):
         sql = f"SELECT * FROM {self.__tablename__}"
         fecth_result = self.execute(sql, ret = 'all')
         
-        return [MedalRankData(val[0], val[1],
-                              val[2], val[3],
-                              val[4], val[5],
-                              val[6])
+        return [MedalRankResponse(val[0], val[1],
+                                  val[2], val[3],
+                                  val[4], val[5],
+                                  val[6])
                 for val in fecth_result]
 
     def query_rank_by_cid(self, cid):

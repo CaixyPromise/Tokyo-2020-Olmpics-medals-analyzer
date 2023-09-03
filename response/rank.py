@@ -1,7 +1,7 @@
 from dataclasses import dataclass, fields, astuple, asdict, field
 
 @dataclass
-class MedalRankData:
+class MedalRankResponse:
     flag : str = field(init=False)
     rank : int
     countryname : str

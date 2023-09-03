@@ -1,16 +1,16 @@
-from dataclasses import dataclass, asdict, fields, astuple
+from dataclasses import dataclass, asdict, fields, astuple, field
 
 
 @dataclass
 class Competition:
     __tablename__ = 'competitions'
-    competition_id: str
-    time: str
-    main_event: str # 比赛大项
-    competition_name: str
-    venue: str      # 比赛地点
-    competition_type : str # 比赛类型
-    status: str
+    competition_id: str = field(default = '')
+    time: str = field(default = '')
+    main_event: str = field(default = '')  # 比赛大项
+    competition_name: str = field(default = '')
+    venue: str = field(default = '')  # 比赛地点
+    competition_type: str = field(default = '')  # 比赛类型
+    status: str = field(default = '')
 
     def to_tuple(self):
         return astuple(self)

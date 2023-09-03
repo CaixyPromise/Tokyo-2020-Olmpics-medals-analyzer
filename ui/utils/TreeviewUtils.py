@@ -43,18 +43,19 @@ class TreeViewUtils(Treeview):
             col = self.identify_column(event.x)  # 获取鼠标点击的列
             # 从列ID中获取列名（例如，从 '#1' 提取 '1'）
             col = col.split('#')[-1]
-            col = int(col) - 1
-            col = self.cget("columns")[col]  # 从列列表中获取列名
+            col = int(col) - 1  # Make sure col is an integer
+            col_name = self.cget("columns")[col]  # 从列列表中获取列名
             # 获取该行该列的值
-            value = self.item(item, "values")[col]
-            return value
-        except Exception:
+            value = self.item(item, "values")
+            return value[col], col, value, item  # 回传双击的行 + 列的值，还有列的下标，最后返回全部数据
+        except Exception as E:
+            print(E)
             raise ValueError('没有选中任何元素')
 
-    def get_choice_RowData(self, ret_type = 'values'):
+    def get_choice_RowData(self, ret_type = 'values', value_type = 'values'):
         try:
             item = self.get_selection  # 获取选中的项
-            value = self.item(item, "values")
+            value = self.item(item, value_type)
             if (ret_type == 'values'):
                 return value
             elif (ret_type == 'item'):

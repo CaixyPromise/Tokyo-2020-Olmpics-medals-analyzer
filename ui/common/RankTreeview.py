@@ -1,6 +1,6 @@
 from ui.utils.TreeviewUtils import TreeViewUtils
 from utils.make_image import make_image
-from response.rank import MedalRankData
+from response.rank import MedalRankResponse
 from typing import List
 from copy import deepcopy
 import tkinter as tk
@@ -46,7 +46,7 @@ class RankTreeview(TreeViewUtils):
     def data(self):
         return deepcopy(self.__data)
 
-    def setup_image(self, Node : List[MedalRankData]):
+    def setup_image(self, Node : List[MedalRankResponse]):
         [setattr(self, val.countryid, make_image(val.flag)) for val in Node]
 
     def __insert(self, medal_node):
@@ -60,7 +60,7 @@ class RankTreeview(TreeViewUtils):
                          image = flag)
 
 
-    def insert_manny(self, dataList : List[MedalRankData]):
+    def insert_manny(self, dataList : List[MedalRankResponse]):
         [self.__insert(medal_node) for medal_node in dataList]
         self.__data = dataList
 

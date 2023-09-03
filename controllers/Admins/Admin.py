@@ -1,6 +1,6 @@
 from ui.AdminWindow import AdminDialogWindow
 from typing import List
-from response.rank import MedalRankData
+from response.rank import MedalRankResponse
 from utils.make_image import make_image
 import tkinter as tk
 from models.enums import Column, ColumnName
@@ -10,13 +10,16 @@ from tkinter import Toplevel
 from ui.MannagerWindow import MannageDialogWindow
 from services.Admins.command import RaceButtonCommand, TeamButtonCommand, MedalButtonCommand, AdminButtonCommand
 from utils.GlobalStatic import GlobalResources
-
+from ui.common.RankTreeview import RankTreeview
+from ui.common.RaceTreeview import RaceTreeview
+from ui.common.TeamTreeview import TeamTreeview
+from ui.common.AdminTreeview import AdminTreeview
 class AdminWindow(AdminDialogWindow):
 
     def add_image2Attr(self, name, image):
         setattr(self, name, make_image(image))
 
-    def setup_image(self, Node : List[MedalRankData]):
+    def setup_image(self, Node : List[MedalRankResponse]):
         [self.add_image2Attr(val.countryid, val.flag) for val in Node]
 
     def __init__(self, master, UserInfo, **kwargs):
@@ -27,24 +30,26 @@ class AdminWindow(AdminDialogWindow):
         self.init_medalRank()
         self.init_button_function()
 
-    def setup_DialogWindow(self, columns, function):
+    def setup_DialogWindow(self, data, function):
         ret_val = tk.Variable()
 
         win = Toplevel(self)
         dialog = MannageDialogWindow(win,
-                                     columns =  columns,
                                      app_name = function,
-                                     init_data = self.__db.query_all_race(),
                                      )
         match function:
             case ColumnName.race:
-                Button_event = RaceButtonCommand(dialog, tree = self.race_infoFrame)
+                dialog.setup_ui(RaceTreeview, init_data = data)
+                Button_event = RaceButtonCommand(dialog, tree = self.race_tree)
             case ColumnName.team:
-                Button_event = TeamButtonCommand(dialog, tree = self.team_infoFrame)
+                dialog.setup_ui(TeamTreeview, init_data = data)
+                Button_event = TeamButtonCommand(dialog, tree = self.team_tree)
             case ColumnName.medal:
-                Button_event = MedalButtonCommand(dialog, tree = self.MedalRank_tree)
+                dialog.setup_ui(RankTreeview, init_data = data)
+                Button_event = MedalButtonCommand(dialog, tree = self.medalRank_tree)
             case ColumnName.admin:
-                Button_event = AdminButtonCommand(dialog, tree = self.admin_infoFrame)
+                dialog.setup_ui(AdminTreeview, init_data = data)
+                Button_event = AdminButtonCommand(dialog, tree = self.admin_tree)
             case _:
                 Button_event = None
 
@@ -53,10 +58,9 @@ class AdminWindow(AdminDialogWindow):
         dialog.mainloop()
 
     def init_button_function(self):
-
-        self.race_mannageBtn.config(command = lambda : self.setup_DialogWindow(Column.race, ColumnName.race))
-        self.team_mannageBtn.config(command = lambda : self.setup_DialogWindow(Column.team, ColumnName.team))
-        self.medal_mannageBtn.config(command = lambda : self.setup_DialogWindow(Column.medal, ColumnName.medal))
+        self.race_mannageBtn.config(command = lambda : self.setup_DialogWindow(self.__db.query_all_race(), ColumnName.race))
+        self.team_mannageBtn.config(command = lambda : self.setup_DialogWindow(self.__db.query_all_team(), ColumnName.team))
+        self.medal_mannageBtn.config(command = lambda : self.setup_DialogWindow(self.__db.query_medal_rank(), ColumnName.medal))
         self.admin_mannageBtn.config(command = lambda : self.setup_DialogWindow(Column.admin, ColumnName.admin))
 
     @staticmethod
@@ -98,6 +102,7 @@ class AdminWindow(AdminDialogWindow):
 
     def init_medalRank(self):
         result = self.__medal_rank
-        self.MedalRank_tree.insert_manny(self.__medal_rank)
+        self.medalRank_tree.insert_manny(self.__medal_rank)
         self.goldRank_tree.insert_manny(self.__gold_rank)
-        self.race_infoFrame.insert_manny(self.__db.query_all_race())
+        self.race_tree.insert_manny(self.__db.query_all_race())
+        self.team_tree.insert_manny(self.__db.query_all_team())

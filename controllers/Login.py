@@ -13,7 +13,7 @@ class LoginControllers:
         if (result):
             if (login_user(response.password, result[2])):
                 result = list(result)
-                config = UserConfig(_id = result[0],
+                config = UserConfig(id_ = result[0],
                                     username = result[1],
                                     role = result[3],
                                     group_id = result[4],

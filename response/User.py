@@ -2,7 +2,7 @@ from dataclasses import dataclass, fields, asdict, astuple
 
 @dataclass
 class UserConfig:
-    _id : int
+    id_ : int
     username : str
     role: int
     group_id: str

@@ -7,6 +7,7 @@ from models.enums import Column
 from ui.common.RankTreeview import RankTreeview
 from ui.common.RaceTreeview import RaceTreeview
 from ui.common.TeamTreeview import TeamTreeview
+from ui.common.AdminTreeview import AdminTreeview
 
 class AdminDialogWindow(ttk.Frame):
     def __init__(self, parent, **kwargs):
@@ -101,9 +102,9 @@ class AdminDialogWindow(ttk.Frame):
         self.medal_infoFrame.pack(expand = True, fill = "both")
         self.MedalRank_scrollbar = ttk.Scrollbar(self.medal_infoFrame, orient = "vertical", )
         self.MedalRank_scrollbar.pack(side = 'right', fill = 'y')
-        self.MedalRank_tree = RankTreeview(self.medal_infoFrame)
-        self.MedalRank_tree.configure(yscrollcommand = self.MedalRank_scrollbar.set)
-        self.MedalRank_scrollbar.config(command = self.MedalRank_tree.yview)
+        self.medalRank_tree = RankTreeview(self.medal_infoFrame)
+        self.medalRank_tree.configure(yscrollcommand = self.MedalRank_scrollbar.set)
+        self.MedalRank_scrollbar.config(command = self.medalRank_tree.yview)
         self.notebook.add(self.medal_infoFrame, text = "奖牌榜")
 
         self.race_info_frame = ttk.Frame(self.notebook)
@@ -111,12 +112,12 @@ class AdminDialogWindow(ttk.Frame):
         self.scrollbar = ttk.Scrollbar(self.race_info_frame, )
         self.scrollbar.pack(side = 'right', fill = 'y')
         # 设置一个TreeViewUtils布局，用于显示比赛项目信息，列名：比赛ID、时间、地点、比赛名称、比赛类型，并插入到notebook中
-        self.race_infoFrame = RaceTreeview(self.race_info_frame)
+        self.race_tree = RaceTreeview(self.race_info_frame)
         # self.race_infoFrame.grid(row = 0, column = 0, padx = 10, pady = 10)
-        self.scrollbar.config(command = self.race_infoFrame.yview)
-        self.race_infoFrame.configure(yscrollcommand = self.scrollbar.set)
+        self.scrollbar.config(command = self.race_tree.yview)
+        self.race_tree.configure(yscrollcommand = self.scrollbar.set)
         self.notebook.add(self.race_info_frame, text = "比赛项目信息")
-        self.scrollbar.config(command = self.race_infoFrame.yview)
+        self.scrollbar.config(command = self.race_tree.yview)
 
 
         # 国家队信息
@@ -124,24 +125,21 @@ class AdminDialogWindow(ttk.Frame):
         self.team_info_frame.pack(expand = True, fill = "both")
         self.team_scrollbar = ttk.Scrollbar(self.team_info_frame, )
         self.team_scrollbar.pack(side = 'right', fill = 'y')
-        self.team_infoFrame = TeamTreeview(self.team_info_frame,
-                                            )
-        self.team_scrollbar.config(command = self.team_infoFrame.yview)
-        self.team_infoFrame.configure(yscrollcommand = self.team_scrollbar.set)
+        self.team_tree = TeamTreeview(self.team_info_frame,
+                                      )
+        self.team_scrollbar.config(command = self.team_tree.yview)
+        self.team_tree.configure(yscrollcommand = self.team_scrollbar.set)
         self.notebook.add(self.team_info_frame, text = "国家队信息")
-        self.team_scrollbar.config(command = self.team_infoFrame.yview)
+        self.team_scrollbar.config(command = self.team_tree.yview)
 
         # 管理员信息
         self.admin_info_frame = ttk.Frame(self.notebook)
         self.admin_info_frame.pack(expand = True, fill = "both")
         self.admin_scrollbar = ttk.Scrollbar(self.admin_info_frame, )
         self.admin_scrollbar.pack(side = 'right', fill = 'y')
-        self.admin_infoFrame = TreeViewUtils(self.admin_info_frame,
-                                            columns = Column.admin.value,
-                                            show = 'headings',
-                                            )
-        self.admin_scrollbar.config(command = self.admin_infoFrame.yview)
-        self.admin_infoFrame.configure(yscrollcommand = self.admin_scrollbar.set)
+        self.admin_tree = AdminTreeview(self.admin_info_frame)
+        self.admin_scrollbar.config(command = self.admin_tree.yview)
+        self.admin_tree.configure(yscrollcommand = self.admin_scrollbar.set)
         self.notebook.add(self.admin_info_frame, text = "管理员信息")
-        self.admin_scrollbar.config(command = self.admin_infoFrame.yview)
+        self.admin_scrollbar.config(command = self.admin_tree.yview)
 

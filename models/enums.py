@@ -10,15 +10,7 @@ class ColumnName(Enum):
 @unique
 class Column(Enum):
     race = ("比赛ID", "时间", '比赛大项', "比赛名称", "比赛场馆",  "比赛类型", '比赛状态')
-    team = ('国家名称', '国家代码', '团队总人数', '管理员名称', '管理员联系方式', '管理员身份')
+    team = ('国家代码', '国家名称', '团队总人数', '管理员名称', '管理员联系方式', '管理员身份')
     medal = ("排名", "国家/地区", "金牌", "银牌", "铜牌", '总数')
     admin = ['管理员账号', '管理员名称',]
-
-
-@unique
-class AskQuestion(Enum):
-    race = dict(zip(['比赛名称', '比赛类型', '比赛时间', '比赛地点', '比赛状态'], ['text', 'text', 'date', 'text', 'text']))
-    team = dict(zip(['国家名称', '用户账号', '用户姓名', '用户身份'], ['text', 'text', 'text', 'text']))
-    medal = dict(zip(['排名', '国家/地区', '金牌', '银牌', '铜牌', '总数'], ['text', 'text', 'text', 'text', 'text', 'text']))
-    admin = dict(zip(['管理员账号', '管理员名称'], ['text', 'text']))
 
