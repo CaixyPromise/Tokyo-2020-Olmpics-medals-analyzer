@@ -1,5 +1,7 @@
 import tkinter as tk
 from controllers.Admins.Admin import AdminWindow
+from controllers.TeamAdmins.TeamAdmin import TeamAdminWindow
+from controllers.Players.Player import PlayerWindow
 from controllers.Login import LoginControllers
 from ui.LoginWindow import LoginWindow
 from tkinter.messagebox import showerror
@@ -20,8 +22,8 @@ class App(LoginWindow):
         self.setup_login()
         self.__login_services = LoginControllers()
         self.textbox_uesrname.focus()
-        self.textbox_uesrname.insert(0, "admin")
-        self.textbox_password.insert(0, "admin")
+        self.textbox_uesrname.insert(0, "PCHN01")
+        self.textbox_password.insert(0, "123456")
 
     def login(self, event = None):
         username = self.textbox_uesrname.get()
@@ -29,6 +31,7 @@ class App(LoginWindow):
 
         result =  self.__login_services.login(LoginResponse(public_id = username, password = password))
         if result: # 密码正确
+            print(result)
             self.enter_index(result)
         else:   # 密码错误
             showerror(title = '错误', message = '用户名或密码错误')
@@ -54,7 +57,14 @@ class App(LoginWindow):
         self.__static['bronze_img'] = make_image(file = "static/image/bronze_medal.png")
 
         self.__user_ui = tk.Toplevel(self.__master)
-        self.index_frame = AdminWindow(self.__user_ui, UserInfo)
+        match UserInfo.role:
+            case 0:
+                self.index_frame = AdminWindow(self.__user_ui, UserInfo)
+            case 1:
+                self.index_frame = TeamAdminWindow(self.__user_ui, UserInfo)
+            case 2:
+                self.index_frame = PlayerWindow(self.__user_ui, UserInfo)
+
         self.__user_ui.focus()
 
         self.index_frame.pack()

@@ -10,7 +10,7 @@ from tkinter.messagebox import showerror
 from tkinter.filedialog import asksaveasfilename, askopenfilename
 from utils.ExcelUtils import MakeTemplate, ReadTemplate
 from models.enums import Column
-from response.User import UserResponse, UserDeleteResponse, UserAddAdminResponse, UserModifyResponse
+from response.User import UserDeleteResponse, UserAddAdminResponse, UserModifyResponse
 import difflib
 
 
@@ -97,6 +97,7 @@ class RaceButtonCommand(Ui_Function):
 
         if most_similar_item:
             self.treeview.selection_set(most_similar_item)
+            self.treeview.see(most_similar_item)
         else:
             showerror('没有找到', '没有找到与输入相似的项')
 
@@ -218,6 +219,7 @@ class TeamButtonCommand(Ui_Function):
 
         if most_similar_item:
             self.treeview.selection_set(most_similar_item)
+            self.treeview.see(most_similar_item)
         else:
             showerror('没有找到', '没有找到与输入相似的项')
 
@@ -346,6 +348,7 @@ class MedalButtonCommand(Ui_Function):
 
         if most_similar_item:
             self.treeview.selection_set(most_similar_item)
+            self.treeview.see(most_similar_item)
         else:
             showerror('没有找到', '没有找到与输入相似的项')
 
@@ -453,10 +456,10 @@ class AdminButtonCommand(Ui_Function):
                 print(all_data)
                 print(f'win.result[0]: {win.result[0]}')
 
-                selection_node = UserModifyResponse(username = all_data[0],
-                                                    public_userid = all_data[1],
-                                                    user_contact = all_data[2],
-                                                    index = index)
+                selection_node = UserModifyResponse(public_userid = all_data[0],
+                                                    username = all_data[1],
+                                                    user_contact = all_data[2],)
+                print(selection_node)
                 self.__service.modify_admin(selection_node)
                 self.treeview.item(item, values = all_data)
                 self.main_tree.item(item, values = all_data)
@@ -479,6 +482,7 @@ class AdminButtonCommand(Ui_Function):
 
         if most_similar_item:
             self.treeview.selection_set(most_similar_item)
+            self.treeview.see(most_similar_item)
         else:
             showerror('没有找到', '没有找到与输入相似的项')
 

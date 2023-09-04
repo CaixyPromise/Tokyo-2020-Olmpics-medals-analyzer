@@ -4,10 +4,9 @@ from utils.MediaViewer.MediaViewer import  MediaViewer
 from tkinter import font
 from ui.common.RankTreeview import RankTreeview
 from ui.common.RaceTreeview import RaceTreeview
-from ui.common.TeamTreeview import TeamTreeview
-from ui.common.AdminTreeview import AdminTreeview
 
-class AdminDialogWindow(ttk.Frame):
+
+class PlayerDialogWindow(ttk.Frame):
     def __init__(self, parent, **kwargs):
         ttk.Frame.__init__(self, parent, **kwargs)
         self.setup_banner()
@@ -25,7 +24,7 @@ class AdminDialogWindow(ttk.Frame):
         banner_frame = tk.Frame(top_frame)
         banner_frame.pack(side = "left", fill = "x", expand = True)
         banner_label = tk.Label(banner_frame,
-                                text = "2020东京奥运会奖牌管理系统 管理员",
+                                text = "2020东京奥运会奖牌管理系统 运动员中心",
                                 font = ("Arial", 14), anchor = "center"
                                 )
         logo_label = tk.Label(banner_frame, anchor = "center")
@@ -49,22 +48,13 @@ class AdminDialogWindow(ttk.Frame):
         self.style.configure("Treeview.Heading", font = self.tree_font )
 
     def setup_command(self):
-        """
-        增加比赛项目信息：管理员可以添加新的比赛项目。
-        删除比赛项目信息：管理员可以删除现有的比赛项目。
-        修改比赛项目信息：管理员可以修改现有的比赛项目。
-        查询比赛项目信息：管理员可以查看所有比赛项目的信息。
-        增加/删除/修改/查询 比赛项目获奖信息：与比赛项目信息操作类似。
-        增加/删除/修改/查询国家队信息：与比赛项目信息操作类似。
-        """
-        # 增加比赛信息按钮, grid布局，self实例化，不绑定command参数
-        self.race_mannageBtn = ttk.Button(self.command_frame, text = "比赛项目管理")
+        self.race_mannageBtn = ttk.Button(self.command_frame, text = "我的比赛管理")
         self.race_mannageBtn.grid(row = 0, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
-        self.team_mannageBtn = ttk.Button(self.command_frame, text = "国家队管理")
+        self.team_mannageBtn = ttk.Button(self.command_frame, text = "我的夺冠时刻")
         self.team_mannageBtn.grid(row = 0, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
-        self.medal_mannageBtn = ttk.Button(self.command_frame, text = "奖牌项目管理")
+        self.medal_mannageBtn = ttk.Button(self.command_frame, text = "修改个人信息")
         self.medal_mannageBtn.grid(row = 1, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
-        self.admin_mannageBtn = ttk.Button(self.command_frame, text = "管理员管理")
+        self.admin_mannageBtn = ttk.Button(self.command_frame, text = "退出系统")
         self.admin_mannageBtn.grid(row = 1, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
 
         logo_frame = tk.Frame(self.command_frame)
@@ -81,7 +71,17 @@ class AdminDialogWindow(ttk.Frame):
         # 设置一个TreeViewUtils布局，用于显示金牌榜信息：列名：排名、国家/地区、金牌、银牌、铜牌、总数
         self.Goldmedal_infoFrame = ttk.Frame(self.notebook)
         self.Goldmedal_infoFrame.pack(expand = True, fill = "both")
-        self.goldRank_scrollbar = ttk.Scrollbar(self.Goldmedal_infoFrame, orient = "vertical", )
+
+        # 金牌榜顶部搜索框
+        gold_search_frame = ttk.Frame(self.Goldmedal_infoFrame)
+        gold_search_frame.pack(side = "top", fill = "x", expand = True)
+        ttk.Label(gold_search_frame, text = "金牌榜搜索", font = ( 'Helvetica', 16,)).pack(side = "left")
+        self.goldRankSearch_entry = ttk.Entry(gold_search_frame, width = 80)
+        self.goldRankSearch_entry.pack(side = "left", fill = "x", expand = True, padx = 5, pady = 5)
+        self.goldRankSearch_button = ttk.Button(gold_search_frame, text = "搜索", width = 10)
+        self.goldRankSearch_button.pack(side = "left", fill = "x", expand = True, padx = 5, pady = 5)
+
+        self.goldRank_scrollbar = ttk.Scrollbar(self.Goldmedal_infoFrame, orient = "vertical")
         self.goldRank_scrollbar.pack(side = 'right', fill = 'y')
         self.goldRank_tree = RankTreeview(self.Goldmedal_infoFrame)
         self.goldRank_scrollbar.config(command = self.goldRank_tree.yview)
@@ -93,6 +93,15 @@ class AdminDialogWindow(ttk.Frame):
         # 设置一个TreeViewUtils布局，用于显示奖牌榜信息：列名：排名、国家/地区、金牌、银牌、铜牌、总数
         self.medal_infoFrame = ttk.Frame(self.notebook)
         self.medal_infoFrame.pack(expand = True, fill = "both")
+        # 金牌榜顶部搜索框
+        medal_searchFrame = ttk.Frame(self.medal_infoFrame)
+        medal_searchFrame.pack(side = "top", fill = "x", expand = True)
+        ttk.Label(medal_searchFrame, text = "奖牌榜搜索", font = ('Helvetica', 16)).pack(side = "left")
+        self.medalRankSearch_entry = ttk.Entry(medal_searchFrame, width = 80)
+        self.medalRankSearch_entry.pack(side = "left", fill = "x", expand = True, padx = 5, pady = 5)
+        self.medalRankSearch_btn = ttk.Button(medal_searchFrame, text = "搜索")
+        self.medalRankSearch_btn.pack(side = "left", fill = "x", expand = True, padx = 5, pady = 5)
+
         self.MedalRank_scrollbar = ttk.Scrollbar(self.medal_infoFrame, orient = "vertical", )
         self.MedalRank_scrollbar.pack(side = 'right', fill = 'y')
         self.medalRank_tree = RankTreeview(self.medal_infoFrame)
@@ -102,6 +111,14 @@ class AdminDialogWindow(ttk.Frame):
 
         self.race_info_frame = ttk.Frame(self.notebook)
         self.race_info_frame.pack(expand = True, fill = "both")
+        race_searchFrame = ttk.Frame(self.race_info_frame)
+        race_searchFrame.pack(side = "top", fill = "x", expand = True)
+        ttk.Label(race_searchFrame, text = "比赛项目搜索", font = ('Helvetica', 16)).pack(side = "left")
+        self.raceRankSearch_entry = ttk.Entry(race_searchFrame, width = 80)
+        self.raceRankSearch_entry.pack(side = "left", fill = "x", expand = True, padx = 5, pady = 5)
+        self.raceRankSearch_btn = ttk.Button(race_searchFrame, text = "搜索")
+        self.raceRankSearch_btn.pack(side = "left", fill = "x", expand = True, padx = 5, pady = 5)
+
         self.scrollbar = ttk.Scrollbar(self.race_info_frame, )
         self.scrollbar.pack(side = 'right', fill = 'y')
         # 设置一个TreeViewUtils布局，用于显示比赛项目信息，列名：比赛ID、时间、地点、比赛名称、比赛类型，并插入到notebook中
@@ -111,28 +128,3 @@ class AdminDialogWindow(ttk.Frame):
         self.race_tree.configure(yscrollcommand = self.scrollbar.set)
         self.notebook.add(self.race_info_frame, text = "比赛项目信息")
         self.scrollbar.config(command = self.race_tree.yview)
-
-
-        # 国家队信息
-        self.team_info_frame = ttk.Frame(self.notebook)
-        self.team_info_frame.pack(expand = True, fill = "both")
-        self.team_scrollbar = ttk.Scrollbar(self.team_info_frame, )
-        self.team_scrollbar.pack(side = 'right', fill = 'y')
-        self.team_tree = TeamTreeview(self.team_info_frame,
-                                      )
-        self.team_scrollbar.config(command = self.team_tree.yview)
-        self.team_tree.configure(yscrollcommand = self.team_scrollbar.set)
-        self.notebook.add(self.team_info_frame, text = "国家队信息")
-        self.team_scrollbar.config(command = self.team_tree.yview)
-
-        # 管理员信息
-        self.admin_info_frame = ttk.Frame(self.notebook)
-        self.admin_info_frame.pack(expand = True, fill = "both")
-        self.admin_scrollbar = ttk.Scrollbar(self.admin_info_frame, )
-        self.admin_scrollbar.pack(side = 'right', fill = 'y')
-        self.admin_tree = AdminTreeview(self.admin_info_frame)
-        self.admin_scrollbar.config(command = self.admin_tree.yview)
-        self.admin_tree.configure(yscrollcommand = self.admin_scrollbar.set)
-        self.notebook.add(self.admin_info_frame, text = "管理员信息")
-        self.admin_scrollbar.config(command = self.admin_tree.yview)
-

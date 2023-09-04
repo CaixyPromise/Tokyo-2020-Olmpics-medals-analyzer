@@ -151,30 +151,33 @@ import tkinter as tk
 from tkcalendar import DateEntry
 from tkinter import ttk
 
-def on_select():
-    selected_date = cal.get_date()
-    selected_time = f"{hour_spin.get()}:{minute_spin.get()}:{second_spin.get()}"
+# def on_select():
+#     selected_date = cal.get_date()
+#     selected_time = f"{hour_spin.get()}:{minute_spin.get()}:{second_spin.get()}"
+#
+#
+# root = tk.Tk()
+#
+# # 创建 Calendar 控件
+# cal = DateEntry(root, date_pattern='y-mm-dd', selectmode = 'readonly')
+# cal.pack(padx=10, pady=10)
+#
+# # 创建 Spinbox 控件用于选择时间
+# hour_spin = tk.Spinbox(root, from_=0, to=23, width=5, wrap = True, format="%02.0f")
+# minute_spin = tk.Spinbox(root, from_=0, to=59, width=5, wrap = True, format="%02.0f")
+# second_spin = tk.Spinbox(root, from_=0, to=59, width=5, wrap = True, format="%02.0f")
+#
+# hour_spin.pack(side=tk.LEFT, padx=(10,0))
+# tk.Label(root, text=":").pack(side=tk.LEFT)
+# minute_spin.pack(side=tk.LEFT)
+# tk.Label(root, text=":").pack(side=tk.LEFT)
+# second_spin.pack(side=tk.LEFT, padx=(0,10))
+#
+# # 创建按钮用于获取选定的日期和时间
+# btn = ttk.Button(root, text="Select", command=on_select)
+# btn.pack(pady=10)
+#
+# root.mainloop()
 
-
-root = tk.Tk()
-
-# 创建 Calendar 控件
-cal = DateEntry(root, date_pattern='y-mm-dd', selectmode = 'readonly')
-cal.pack(padx=10, pady=10)
-
-# 创建 Spinbox 控件用于选择时间
-hour_spin = tk.Spinbox(root, from_=0, to=23, width=5, wrap = True, format="%02.0f")
-minute_spin = tk.Spinbox(root, from_=0, to=59, width=5, wrap = True, format="%02.0f")
-second_spin = tk.Spinbox(root, from_=0, to=59, width=5, wrap = True, format="%02.0f")
-
-hour_spin.pack(side=tk.LEFT, padx=(10,0))
-tk.Label(root, text=":").pack(side=tk.LEFT)
-minute_spin.pack(side=tk.LEFT)
-tk.Label(root, text=":").pack(side=tk.LEFT)
-second_spin.pack(side=tk.LEFT, padx=(0,10))
-
-# 创建按钮用于获取选定的日期和时间
-btn = ttk.Button(root, text="Select", command=on_select)
-btn.pack(pady=10)
-
-root.mainloop()
+s = '我是?'
+print(s.upper())

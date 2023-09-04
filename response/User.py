@@ -69,7 +69,6 @@ class UserModifyResponse:
     username : str
     public_userid : str
     user_contact : str
-    index: str
 
     def to_tuple(self):
         return astuple(self)

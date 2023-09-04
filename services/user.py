@@ -10,16 +10,16 @@ class UserService(DatabaseConnection):
     def __init__(self):
         super(UserService, self).__init__()
 
-    def inser_user(self, UserResponse: Users):
+    def inser_user(self, response: Users):
         sql = "INSERT INTO users ( username, password_hash, role, group_id, public_userid, user_contact) VALUES ( ?, ?, ?, ?, ?, ?)"
-        if (isinstance(UserResponse.password_hash, str)):
-            UserResponse.password_hash = register_user(UserResponse.password_hash)
-        self.execute(sql, args = (UserResponse.username,
-                                  UserResponse.password_hash,
-                                  UserResponse.role,
-                                  UserResponse.group_id,
-                                  UserResponse.public_userid,
-                                  UserResponse.user_contact),
+        if (isinstance(response.password_hash, str)):
+            response.password_hash = register_user(response.password_hash)
+        self.execute(sql, args = (response.username,
+                                  response.password_hash,
+                                  response.role,
+                                  response.group_id,
+                                  response.public_userid,
+                                  response.user_contact),
                      commit = True
                      )
     def insert_mannyAdmin(self, dataList : List[UserAddAdminResponse]):
@@ -71,7 +71,7 @@ class UserService(DatabaseConnection):
         sql = "DELETE FROM users WHERE public_userid=?"
         self.execute(sql, args = (Response.public_userid,), commit = True)
     def modify_admin(self, respose : UserModifyResponse):
-        sql = "UPDATE users SET username = ?, public_userid = ?, user_contact = ? WHERE public_userid=?"
-        print(f'response: {(respose.username, respose.public_userid, respose.user_contact, respose.index,)}')
-        self.execute(sql, args = (respose.username, respose.public_userid, respose.user_contact, respose.index,), commit = True)
+        sql = "UPDATE users SET username = ?, user_contact = ? WHERE public_userid=?"
+        print(f'response: {(respose.username, respose.public_userid, respose.user_contact ,)}')
+        self.execute(sql, args = (respose.username, respose.user_contact, respose.public_userid, ), commit = True)
 

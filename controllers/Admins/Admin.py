@@ -26,9 +26,7 @@ class AdminWindow(AdminDialogWindow):
         ret_val = tk.Variable()
 
         win = Toplevel(self)
-        dialog = MannageDialogWindow(win,
-                                     app_name = function,
-                                     )
+        dialog = MannageDialogWindow(win, app_name = function,)
         match function:
             case ColumnName.race:
                 dialog.setup_ui(RaceTreeview, init_data = data)
@@ -93,7 +91,6 @@ class AdminWindow(AdminDialogWindow):
         self.__gold_rank = self.init_glodRank(deepcopy(self.__medal_rank))
 
     def init_medalRank(self):
-        result = self.__medal_rank
         self.medalRank_tree.insert_manny(self.__medal_rank)
         self.goldRank_tree.insert_manny(self.__gold_rank)
         self.race_tree.insert_manny(self.__db.query_all_race())

@@ -14,8 +14,9 @@ class RaceTreeview(TreeViewUtils):
                                                   race_node.main_event,
                                                   race_node.competition_name,
                                                   race_node.venue,
+                                                  race_node.status,
                                                   race_node.competition_type,
-                                                  race_node.status))
+                                                  ))
 
     def insert_manny(self, race_nodes):
         [self.insert_single(race_node) for race_node in race_nodes]
