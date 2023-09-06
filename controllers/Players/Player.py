@@ -90,8 +90,7 @@ class PlayerWindow(PlayerDialogWindow):
                                                                          column_index = (0, 1)))
         self.raceRankSearch_entry.bind('<Return>', lambda x:self.search(self.raceRankSearch_entry.get().upper(),
                                                                       self.race_tree,
-                                                                         column_index = (0, 2, 3, 4)
-                                                                        ))
+                                                                         column_index = (0, 2, 3, 4)))
 
 
     def get_db(self):

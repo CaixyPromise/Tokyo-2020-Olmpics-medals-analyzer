@@ -179,5 +179,102 @@ from tkinter import ttk
 #
 # root.mainloop()
 
-s = '我是?'
-print(s.upper())
+# s = '我是?'
+# print(s.upper())
+import tkinter
+from time import sleep
+from itertools import count
+from threading import Thread, Event
+from tkinter.filedialog import askopenfilename
+import pyaudio
+from PIL import Image, ImageTk
+from moviepy.editor import VideoFileClip
+
+root = tkinter.Tk()
+root.title("视频播放器-董付国")
+root.geometry('860x640+200+100')
+
+isplaying = False
+sync_event = Event()  # Added for synchronization
+
+# 用来显示视频画面的Label组件，自带双缓冲，不闪烁
+lbVideo = tkinter.Label(root, bg='white')
+lbVideo.pack(fill=tkinter.BOTH, expand=tkinter.YES)
+
+def play_video(video):
+    global sync_event
+    vw = video.w
+    vh = video.h
+    # 逐帧播放画面
+    for frame in video.iter_frames(fps=video.fps/2.5):
+        if not isplaying:
+            break
+        if not sync_event.is_set():
+            sync_event.wait()
+        w = root.winfo_width()
+        h = root.winfo_height()
+        # 保持原视频的纵横比
+        ratio = min(w/vw, h/vh)
+        size = (int(vw*ratio), int(vh*ratio))
+        frame = Image.fromarray(frame).resize(size)
+        frame = ImageTk.PhotoImage(frame)
+        lbVideo['image'] = frame
+        lbVideo.image = frame
+        lbVideo.update()
+
+def play_audio(audio):
+    global sync_event
+    p = pyaudio.PyAudio()
+    # 创建输出流
+    stream = p.open(format=pyaudio.paFloat32, channels=2, rate=44100, output=True)
+    sync_event.set()
+    # 逐帧播放音频
+    for chunk in audio.iter_frames():
+        if not isplaying:
+            break
+        stream.write(chunk.astype('float32').tostring())
+    p.terminate()
+
+# 创建主菜单
+mainMenu = tkinter.Menu(root)
+
+# 创建子菜单
+subMenu = tkinter.Menu(mainMenu, tearoff=0)
+
+def open_video():
+    global isplaying, sync_event
+    isplaying = False
+    sync_event.clear()  # Reset the event
+    fn = askopenfilename(title='打开视频文件', filetypes=[("视频", "*.mp4 *.avi")])
+    if fn:
+        root.title(f'视频播放器-董付国-正在播放 "{fn}"')
+        video = VideoFileClip(fn)
+        audio = video.audio
+        isplaying = True
+        # 播放视频的线程
+        t1 = Thread(target=play_video, args=(video,))
+        t1.daemon = True
+        t1.start()
+        # 播放音频的线程
+        t2 = Thread(target=play_audio, args=(audio,))
+        t2.daemon = True
+        t2.start()
+
+# 添加菜单项，设置命令
+subMenu.add_command(label='打开视频文件', command=open_video)
+
+# 把子菜单挂到主菜单上
+mainMenu.add_cascade(label='文件', menu=subMenu)
+
+# 把主菜单放置到窗口上
+root['menu'] = mainMenu
+
+# 确保子线程关闭
+def exiting():
+    global isplaying
+    isplaying = False
+    sleep(0.95)
+    root.destroy()
+
+root.protocol('WM_DELETE_WINDOW', exiting)
+root.mainloop()
