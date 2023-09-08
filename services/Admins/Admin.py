@@ -23,12 +23,12 @@ class AdminService(DatabaseConnection):
         self.__user.insert_mannyAdmin(dataList)
 
     def modify_admin(self, response):
-        self.__user.modify_admin(response)
+        self.__user.modify_userinfo(response)
     def query_admin(self):
         return  self.__user.query_admin()
 
     def delete_admin(self, delete_node):
-        return self.__user.delete_admin(delete_node)
+        return self.__user.delete_user(delete_node)
 
     def query_medal_rank(self):
         return self.__medal.query_all_rank()

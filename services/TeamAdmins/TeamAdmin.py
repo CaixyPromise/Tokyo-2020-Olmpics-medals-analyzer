@@ -21,3 +21,15 @@ class TeamAdminService(DatabaseConnection):
 
     def query_all_race(self):
         return self.__race.query_all_competitions()
+
+    def insert_player(self, response):
+        return self.__user.inser_user(response)
+
+    def insert_manny_player(self, responseList):
+        return self.__user.insert_usermany(responseList)
+
+    def delete_player(self, delete_node):
+        return self.__user.delete_user(delete_node)
+
+    def modify_player(self, modify_node):
+        return self.__user.modify_userinfo(modify_node)

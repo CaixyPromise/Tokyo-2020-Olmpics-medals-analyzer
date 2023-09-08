@@ -1,7 +1,7 @@
 from utils.account import login_user
 from db.DatabaseConnection import DatabaseConnection
 import sqlite3
-from models.Users import Users
+from models.Users import User
 from services.user import UserService
 from response.login import LoginVerifyResponse, LoginResponse
 from response.User import UserConfig

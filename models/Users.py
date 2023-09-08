@@ -1,7 +1,7 @@
 from dataclasses import dataclass, astuple, asdict, fields, field
 
 @dataclass
-class Users:
+class User:
     __tablename__ = 'users'
     username: str
     password_hash: str

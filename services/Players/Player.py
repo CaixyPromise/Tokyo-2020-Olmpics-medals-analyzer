@@ -21,3 +21,12 @@ class PlayerService(DatabaseConnection):
 
     def query_all_race(self):
         return self.__race.query_all_competitions()
+
+    def query_race_with_status(self, status = '未开始'):
+        return self.__race.query_all_competitions_with_status(status)
+
+    def insert_race_sighup(self, race_node):
+        return self.__race.sigh_up_race(race_node)
+
+    def delete_race_sighup(self, race_node):
+        return self.__race.delete_race_sighup(race_node)

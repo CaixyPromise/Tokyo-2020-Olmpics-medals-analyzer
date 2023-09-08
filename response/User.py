@@ -78,3 +78,21 @@ class UserModifyResponse:
 
     def to_list(self):
         return [getattr(self, f.name) for f in fields(self)]
+
+@dataclass
+class InsertPlayerResponse:
+    username: str
+    public_userid: str
+    user_contact : str
+    group_id: str
+    role: int = field(default = 2)
+    password_hash: str = field(default = '123456')
+
+    def to_tuple(self):
+        return astuple(self)
+
+    def to_dict(self):
+        return asdict(self)
+
+    def to_list(self):
+        return [getattr(self, f.name) for f in fields(self)]

@@ -5,7 +5,7 @@ from services.Admins.Admin import AdminService
 from models.competition import Competition
 from models.team import NationalTeam
 from models.medal_Rank import Medal_rank
-from models.Users import Users
+from models.Users import User
 from tkinter.messagebox import showerror
 from tkinter.filedialog import asksaveasfilename, askopenfilename
 from utils.ExcelUtils import MakeTemplate, ReadTemplate
@@ -401,18 +401,18 @@ class AdminButtonCommand(Ui_Function):
         win.wait_window()
         if win.result:
             username, public_userid, user_contact = win.result
-            user_node = Users(group_id = 'Admin',
-                              username = username,
-                              password_hash = '123456',
-                              role = 0,
-                              public_userid = public_userid,
-                              user_contact = user_contact,
-                              )
+            user_node = User(group_id = 'Admin',
+                             username = username,
+                             password_hash = '123456',
+                             role = 0,
+                             public_userid = public_userid,
+                             user_contact = user_contact,
+                             )
             # # 提交数据库
             try:
                 self.__service.insert_Adminuser(user_node)
             except Exception:
-                messagebox.showinfo('提示', '添加失败, 比赛ID重复')
+                messagebox.showinfo('提示', '添加失败, ID重复')
             messagebox.showinfo('提示', '添加成功')
             self.treeview.insert_single(user_node)
             self.main_tree.update()
@@ -453,13 +453,9 @@ class AdminButtonCommand(Ui_Function):
                 index = before[column_index]
                 all_data = list(all_data)
                 all_data[column_index] = win.result[0]
-                print(all_data)
-                print(f'win.result[0]: {win.result[0]}')
-
                 selection_node = UserModifyResponse(public_userid = all_data[0],
                                                     username = all_data[1],
                                                     user_contact = all_data[2],)
-                print(selection_node)
                 self.__service.modify_admin(selection_node)
                 self.treeview.item(item, values = all_data)
                 self.main_tree.item(item, values = all_data)

@@ -10,6 +10,16 @@ class CompetitionsService(DatabaseConnection):
     def __init__(self) -> None:
         super(CompetitionsService, self).__init__()
 
+    def sigh_up_race(self, race_node):
+        sql = """INSERT INTO signUp_race (race_id, player_id) VALUES (?, ?)"""
+        self.execute(sql, args = (race_node.race_id, race_node.player_id),
+                     commit = True)
+
+    def delete_race_sighup(self, race_node):
+        sql = """DELETE FROM signUp_race WHERE race_id = ? AND player_id = ?"""
+        self.execute(sql, args = (race_node.race_id, race_node.player_id), commit = True)
+
+
     def insert_competition(self, competition: Competition):
         sql = f"""INSERT INTO {self.__tablename__} (competition_id, time, main_event, 
                   competition_name, competition_type, venue, status) VALUES (?, ?, ?, ?, ?, ?, ?)"""
@@ -37,6 +47,12 @@ class CompetitionsService(DatabaseConnection):
         sql = f"SELECT * FROM {self.__tablename__}"
         fetch_result = [Competition(*v) for v in self.execute(sql, ret = 'all')]
         return fetch_result
+
+    def query_all_competitions_with_status(self, status):
+        sql = f"SELECT * FROM competitions WHERE status=?"
+        fetch_result = [Competition(*v) for v in self.execute(sql, args = (status,), ret = 'all')]
+        return fetch_result
+
 
     def query_competition_by_id(self, competition_id):
         sql = f"SELECT * FROM {self.__tablename__} WHERE competition_id=?"
