@@ -49,13 +49,13 @@ class TeamAdminDialogWindow(ttk.Frame):
 
     def setup_command(self):
         self.race_mannageBtn = ttk.Button(self.command_frame, text = "团队运动员管理")
-        self.race_mannageBtn.grid(row = 0, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
-        self.team_mannageBtn = ttk.Button(self.command_frame, text = "团队管理员管理")
-        self.team_mannageBtn.grid(row = 0, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
-        self.medal_mannageBtn = ttk.Button(self.command_frame, text = "修改个人信息")
-        self.medal_mannageBtn.grid(row = 1, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
-        self.admin_mannageBtn = ttk.Button(self.command_frame, text = "退出系统")
-        self.admin_mannageBtn.grid(row = 1, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
+        self.race_mannageBtn.grid(row = 0, column = 0, columnspan = 2, padx = 10, pady = 10, sticky = tk.NSEW)
+        # self.team_mannageBtn = ttk.Button(self.command_frame, text = "团队管理员管理")
+        # self.team_mannageBtn.grid(row = 0, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
+        # self.medal_mannageBtn = ttk.Button(self.command_frame, text = "修改个人信息")
+        # self.medal_mannageBtn.grid(row = 1, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
+        self.exit_sysBtn = ttk.Button(self.command_frame, text = "退出系统")
+        self.exit_sysBtn.grid(row = 1, column = 0, columnspan = 2, padx = 10, pady = 10, sticky = tk.NSEW)
 
         logo_frame = tk.Frame(self.command_frame)
         logo_frame.grid(row = 2, column = 0, columnspan = 2, padx = 10, pady = 10, sticky = tk.NSEW, rowspan = 2)

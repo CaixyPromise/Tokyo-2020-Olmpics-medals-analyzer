@@ -11,7 +11,7 @@ from response.sighUpRaceResponse import SignUpRace
 
 class RaceMannageButtonCommand(Ui_Function):
     question_config = {
-        '比赛状态': {'type': 'combobox'},
+        '报名比赛': {'type': 'combobox'},
         }
 
     def __init__(self, parent = None, **kwargs):

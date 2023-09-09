@@ -5,7 +5,7 @@ from tkinter import font
 from ui.common.RankTreeview import RankTreeview
 from ui.common.RaceTreeview import RaceTreeview
 from ui.common.TeamTreeview import TeamTreeview
-from ui.common.AdminTreeview import AdminTreeview
+from ui.common.UserTreeview import UserTreeview
 
 class AdminDialogWindow(ttk.Frame):
     def __init__(self, parent, **kwargs):
@@ -130,7 +130,7 @@ class AdminDialogWindow(ttk.Frame):
         self.admin_info_frame.pack(expand = True, fill = "both")
         self.admin_scrollbar = ttk.Scrollbar(self.admin_info_frame, )
         self.admin_scrollbar.pack(side = 'right', fill = 'y')
-        self.admin_tree = AdminTreeview(self.admin_info_frame)
+        self.admin_tree = UserTreeview(self.admin_info_frame)
         self.admin_scrollbar.config(command = self.admin_tree.yview)
         self.admin_tree.configure(yscrollcommand = self.admin_scrollbar.set)
         self.notebook.add(self.admin_info_frame, text = "管理员信息")

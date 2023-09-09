@@ -6,6 +6,7 @@ class ColumnName(Enum):
     team = '队伍'
     medal = '奖牌榜'
     admin = '管理员'
+    player = '我的比赛'
 
 @unique
 class Column(Enum):

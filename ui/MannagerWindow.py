@@ -15,31 +15,31 @@ class MannageDialogWindow(ttk.Frame):
         self.app = app_name.value
         self.headings = headings
 
-    def setup_func(self, function):
-        """
-        TODO: 根据传入的app身份参数，绑定特定的函数
-        :return:
-        """
+    def setup_func(self, function, all_ = True):
         self.function = function
-        self.add_button.config(command =  self.function.add)
-        self.delete_button.config(command = self.function.remove)
-        self.BacthAdd_button.config(command = self.function.manny)
-        self.treeview.bind('<Double-1>', lambda event : self.function.modify(event = event))
-        self.search_button.config(command = self.function.search)
-        self.template_button.config(command = self.function.template)
+        if (all_):
+            self.add_button.config(command = self.function.add)
+            self.delete_button.config(command = self.function.remove)
+            self.treeview.bind('<Double-1>', lambda event: self.function.modify(event = event))
+            self.search_button.config(command = self.function.search)
+            self.BacthAdd_button.config(command = self.function.manny)
+            self.template_button.config(command = self.function.template)
+        else:
+            self.add_button.config(command = self.function.add)
+            self.delete_button.config(command = self.function.remove)
+            self.treeview.bind('<Double-1>', lambda event: self.function.modify(event = event))
+            self.search_button.config(command = self.function.search)
 
     def get_choice_columnDataByrow(self, event = None):
         try:
             return self.treeview.get_choice_columnData()
         except Exception as E:
-            print(E)
             showerror('没有选中值', '请先在左侧选中值')
 
     def get_choice_RowData(self, ret_type = 'all', value_type = 'values'):
         try:
             return self.treeview.get_choice_RowData(ret_type)
         except Exception as E:
-            print(E)
             showerror('没有选中值', '请先在左侧选中值')
 
     def setup_ui(self, tree, init_data):

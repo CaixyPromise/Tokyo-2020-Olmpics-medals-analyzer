@@ -55,7 +55,7 @@ class App(LoginWindow):
         self.__static['gold_img'] = make_image(file = "static/image/gold_medal.png")
         self.__static['silver_img'] = make_image(file = "static/image/silver_medal.png")
         self.__static['bronze_img'] = make_image(file = "static/image/bronze_medal.png")
-
+        self.__static['user_config'] = UserInfo
         self.__user_ui = tk.Toplevel(self.__master)
         match UserInfo.role:
             case 0:

@@ -4,7 +4,16 @@ from ui.TeamAdminWindow import TeamAdminDialogWindow
 from utils.make_image import make_image
 from services.TeamAdmins.TeamAdmin import TeamAdminService
 from copy import deepcopy
+import tkinter as tk
+from ui.MannagerWindow import MannageDialogWindow
+from models.enums import Column, ColumnName
 from utils.GlobalStatic import GlobalResources
+from ui.common.RankTreeview import RankTreeview
+from ui.common.RaceTreeview import RaceTreeview
+from ui.common.TeamTreeview import TeamTreeview
+from ui.common.UserTreeview import UserTreeview
+from tkinter import Toplevel
+from services.TeamAdmins.command import InsertPlalyerButtonCommand
 
 class TeamAdminWindow(TeamAdminDialogWindow):
     def __init__(self, parent, UserInfo, **kwargs):
@@ -83,7 +92,29 @@ class TeamAdminWindow(TeamAdminDialogWindow):
                                                                          self.goldRank_tree))
         self.medalRankSearch_entry.bind('<Return>', lambda x : self.search(self.medalRankSearch_entry.get().upper(),
                                                                        self.medalRank_tree))
+    def setup_DialogWindow(self, data, function):
+        ret_val = tk.Variable()
 
+        win = Toplevel(self)
+        dialog = MannageDialogWindow(win, app_name = function,)
+        match function:
+            case ColumnName.race:
+                dialog.setup_ui(UserTreeview, init_data = data)
+                Button_event = InsertPlalyerButtonCommand(dialog,
+                                      tree = self.race_tree,
+                                      user_config = self.__static.get('user_config'))
+            case _:
+                Button_event = None
+
+        dialog.setup_func(Button_event)
+        dialog.pack()
+        dialog.mainloop()
+
+    def init_button_function(self):
+        self.race_mannageBtn.config(command = lambda : self.setup_DialogWindow(self.__db.query_all_race(), ColumnName.race))
+        # self.team_mannageBtn.config(command = lambda : self.setup_DialogWindow(self.__db.query_all_team(), ColumnName.team))
+        # self.medal_mannageBtn.config(command = lambda : self.setup_DialogWindow(self.__db.query_medal_rank(), ColumnName.medal))
+        self.exit_sysBtn.config(command = lambda : exit(0))
 
     def get_db(self):
         # 获取奖牌榜

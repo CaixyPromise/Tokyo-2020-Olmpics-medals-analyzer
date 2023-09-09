@@ -52,10 +52,8 @@ class PlayerDialogWindow(ttk.Frame):
         self.race_mannageBtn.grid(row = 0, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
         self.team_mannageBtn = ttk.Button(self.command_frame, text = "我的夺冠时刻")
         self.team_mannageBtn.grid(row = 0, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
-        self.medal_mannageBtn = ttk.Button(self.command_frame, text = "修改个人信息")
-        self.medal_mannageBtn.grid(row = 1, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
-        self.admin_mannageBtn = ttk.Button(self.command_frame, text = "退出系统")
-        self.admin_mannageBtn.grid(row = 1, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
+        self.exit_systemBTN = ttk.Button(self.command_frame, text = "退出系统")
+        self.exit_systemBTN.grid(row = 1, column = 0, columnspan = 1, padx = 10, pady = 10, sticky = tk.NSEW)
 
         logo_frame = tk.Frame(self.command_frame)
         logo_frame.grid(row = 2, column = 0, columnspan = 2, padx = 10, pady = 10, sticky = tk.NSEW, rowspan = 2)

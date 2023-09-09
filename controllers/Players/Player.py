@@ -4,7 +4,14 @@ from ui.PlayerWindow import PlayerDialogWindow
 from utils.make_image import make_image
 from services.Players.Player import PlayerService
 from copy import deepcopy
+import tkinter as tk
+from ui.MannagerWindow import MannageDialogWindow
+from models.enums import ColumnName
 from utils.GlobalStatic import GlobalResources
+from ui.common.RaceTreeview import RaceTreeview
+from ui.common.UserTreeview import UserTreeview
+from tkinter import Toplevel
+from services.Players.command import RaceMannageButtonCommand
 
 class PlayerWindow(PlayerDialogWindow):
     def __init__(self, parent, UserInfo, **kwargs):
@@ -14,6 +21,8 @@ class PlayerWindow(PlayerDialogWindow):
         self.get_db()
         self.init_medalRank()
         self.bind_function()
+        self.init_button_function()
+        self.__User = UserInfo
 
     @staticmethod
     def init_glodRank(medal_rank):
@@ -92,6 +101,31 @@ class PlayerWindow(PlayerDialogWindow):
                                                                       self.race_tree,
                                                                          column_index = (0, 2, 3, 4)))
 
+    def setup_DialogWindow(self, data, function):
+        ret_val = tk.Variable()
+
+        win = Toplevel(self)
+        dialog = MannageDialogWindow(win, app_name = function, )
+        match function:
+            case ColumnName.player:
+                dialog.setup_ui(RaceTreeview, init_data = data)
+                Button_event = RaceMannageButtonCommand(dialog,
+                                                        tree = self.race_tree,
+                                                        user_config = self.__static['info'])
+            case _:
+                Button_event = None
+
+        dialog.setup_func(Button_event, all_ = False)
+        dialog.pack()
+        dialog.mainloop()
+
+    def init_button_function(self):
+        self.race_mannageBtn.config(
+            command = lambda: self.setup_DialogWindow(self.__db.query_race_by_playID(self.__User.username), ColumnName.player)
+            )
+        # self.team_mannageBtn.config(
+        #     command = lambda: self.setup_DialogWindow(self.__db.query_all_team(), ColumnName.team))
+        self.exit_systemBTN.config(command = lambda: [exit(0)])
 
     def get_db(self):
         # 获取奖牌榜

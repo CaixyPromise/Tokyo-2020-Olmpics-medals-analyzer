@@ -11,7 +11,7 @@ from utils.GlobalStatic import GlobalResources
 from ui.common.RankTreeview import RankTreeview
 from ui.common.RaceTreeview import RaceTreeview
 from ui.common.TeamTreeview import TeamTreeview
-from ui.common.AdminTreeview import AdminTreeview
+from ui.common.UserTreeview import UserTreeview
 
 class AdminWindow(AdminDialogWindow):
     def __init__(self, master, UserInfo, **kwargs):
@@ -38,7 +38,7 @@ class AdminWindow(AdminDialogWindow):
                 dialog.setup_ui(RankTreeview, init_data = data)
                 Button_event = MedalButtonCommand(dialog, tree = self.medalRank_tree)
             case ColumnName.admin:
-                dialog.setup_ui(AdminTreeview, init_data = data)
+                dialog.setup_ui(UserTreeview, init_data = data)
                 Button_event = AdminButtonCommand(dialog, tree = self.admin_tree)
             case _:
                 Button_event = None

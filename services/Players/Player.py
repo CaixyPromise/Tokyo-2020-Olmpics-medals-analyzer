@@ -30,3 +30,6 @@ class PlayerService(DatabaseConnection):
 
     def delete_race_sighup(self, race_node):
         return self.__race.delete_race_sighup(race_node)
+
+    def query_race_by_playID(self, play_id):
+        return self.__race.query_race_by_playID(play_id)

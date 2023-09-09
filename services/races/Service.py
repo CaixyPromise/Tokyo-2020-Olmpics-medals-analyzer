@@ -19,6 +19,12 @@ class CompetitionsService(DatabaseConnection):
         sql = """DELETE FROM signUp_race WHERE race_id = ? AND player_id = ?"""
         self.execute(sql, args = (race_node.race_id, race_node.player_id), commit = True)
 
+    def query_race_by_playID(self, play_id):
+        sql = """SELECT c.*
+FROM signUp_race s
+JOIN competitions c ON s.race_id = c.competition_id
+WHERE s.player_id = ?"""
+        return [Competition(*v) for v in self.execute(sql, args = (play_id,), ret = 'all')]
 
     def insert_competition(self, competition: Competition):
         sql = f"""INSERT INTO {self.__tablename__} (competition_id, time, main_event, 
