@@ -23,7 +23,7 @@ class InsertPlalyerButtonCommand(Ui_Function):
         self.user_config : UserConfig = self.part.get('user_config')
 
     def add(self, **kwags):
-        win = AskUserQuestionDialog(columns = self.question_config, name = '新增运动员')
+        win = AskUserQuestionDialog(part_dict = self.question_config, name = '新增运动员')
         win.wait_window()
         if win.result:
             username, public_userid, user_contact = win.result
@@ -71,7 +71,7 @@ class InsertPlalyerButtonCommand(Ui_Function):
                 return
             question_name = list(self.question_config.keys())[column_index]
             column = {question_name: self.question_config[question_name]}
-            win = AskUserQuestionDialog(columns = column,
+            win = AskUserQuestionDialog(part_dict = column,
                                         name = f'修改 {question_name}')
             win.wait_window()
             if (win.result is not None):

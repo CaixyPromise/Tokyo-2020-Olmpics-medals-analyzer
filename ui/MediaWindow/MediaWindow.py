@@ -27,7 +27,7 @@ class VideoPlayer:
 
         self.root = root
         # self.root.overrideredirect(1)
-        # self.root.geometry('+0+0')
+        self.root.geometry(f'{self.width}x{self.height}+0+0')
         self.resize = False
         self.root.withdraw()
 
@@ -53,6 +53,7 @@ class VideoPlayer:
                 self.resize = True
             elif k == "videoOptions" and val == True:
                 self.root.bind('<Button-3>', self.options)
+        self.root.protocol("WM_DELETE_WINDOW", self.kill)
 
     def play(self):
         self.root.deiconify()
@@ -311,10 +312,9 @@ class VideoPlayer:
 
         self.kill()
 
-
 class MediaPlayerDialogWindow:
-    def __init__(self, file, **kwargs):
-        root = Tk()
+    def __init__(self, root, file, **kwargs):
+
         player = VideoPlayer(root, file, **kwargs)
 
         try:
@@ -323,3 +323,9 @@ class MediaPlayerDialogWindow:
             player.kill()
 
         root.mainloop()
+def open_window(filepath, title):
+    window = Tk()
+    window.title(title)
+    w = MediaPlayerDialogWindow(window, filepath)
+
+

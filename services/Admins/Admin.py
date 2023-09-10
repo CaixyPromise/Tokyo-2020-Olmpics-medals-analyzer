@@ -89,4 +89,5 @@ class AdminService(DatabaseConnection):
     def query_team_by_name(self, team_name):
         return self.__team.query_team_by_name(team_name)
 
-
+    def update_medal(self, reponse):
+        return self.__medal.update_medal(reponse)

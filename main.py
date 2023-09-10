@@ -22,8 +22,10 @@ class App(LoginWindow):
         self.setup_login()
         self.__login_services = LoginControllers()
         self.textbox_uesrname.focus()
-        self.textbox_uesrname.insert(0, "PCHN01")
-        self.textbox_password.insert(0, "123456")
+        self.textbox_uesrname.insert(0, "admin")
+        self.textbox_password.insert(0, "admin")
+        # self.textbox_uesrname.insert(0, "PCHN01")
+        # self.textbox_password.insert(0, "123456")
 
     def login(self, event = None):
         username = self.textbox_uesrname.get()

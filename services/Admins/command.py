@@ -1,3 +1,6 @@
+import concurrent.futures
+
+from response.medal import MedalInsertResponse
 from ui.utils.functions import Ui_Function
 from ui.AskUserQuestionWindow import AskUserQuestionDialog
 from tkinter import messagebox
@@ -12,6 +15,9 @@ from utils.ExcelUtils import MakeTemplate, ReadTemplate
 from models.enums import Column
 from response.User import UserDeleteResponse, UserAddAdminResponse, UserModifyResponse
 import difflib
+from tkinter import StringVar
+
+from utils.upload_file import copy_and_rename_files
 
 
 class RaceButtonCommand(Ui_Function):
@@ -32,7 +38,7 @@ class RaceButtonCommand(Ui_Function):
         self.treeview = self.parent.treeview         # 子界面的tree -- mannager 界面里的
 
     def add(self, **kwags):
-        win = AskUserQuestionDialog(columns = self.question_config,
+        win = AskUserQuestionDialog(part_dict = self.question_config,
                                     name = '新增比赛')
         win.wait_window()
         if win.result:
@@ -68,7 +74,7 @@ class RaceButtonCommand(Ui_Function):
             column_data, column_index, all_data,  item = selection
             question_name = list(self.question_config.keys())[column_index]
             column = {question_name: self.question_config[question_name]}
-            win = AskUserQuestionDialog(columns = column,
+            win = AskUserQuestionDialog(part_dict = column,
                                         name = f'修改 {question_name}')
             win.wait_window()
             if (win.result is not None):
@@ -146,7 +152,7 @@ class TeamButtonCommand(Ui_Function):
 
     def add(self, **kwags):
         # 新增队伍
-        win = AskUserQuestionDialog(columns = self.question_config,
+        win = AskUserQuestionDialog(part_dict = self.question_config,
                                     name = '新增国家队'
                                     )
         win.wait_window()
@@ -188,7 +194,7 @@ class TeamButtonCommand(Ui_Function):
             column_data, column_index, all_data,  item = selection
             question_name = list(self.question_config.keys())[column_index]
             column = {question_name: self.question_config[question_name]}
-            win = AskUserQuestionDialog(columns = column,
+            win = AskUserQuestionDialog(part_dict = column,
                                         name = f'修改 {question_name}')
             win.wait_window()
             if (win.result is not None):
@@ -251,41 +257,101 @@ class TeamButtonCommand(Ui_Function):
 
 
 class MedalButtonCommand(Ui_Function):
-    question_config = {
-        '排名':   {'type': 'text'},
-        '国家/地区': {'type': 'text'},
-        '国家/地区代码': {'type': 'text'},
-        '金牌': {'type': 'text'},
-        '银牌': {'type': 'text'},
-        '铜牌': {'type': 'text'},
-        }
+
     def __init__(self, parent = None, **kwargs):
         super(MedalButtonCommand, self).__init__(parent, **kwargs)
         self.__service = AdminService()
         self.main_tree = self.part.get('tree')  # 主界面的tree
         self.treeview = self.parent.treeview  # 子界面的tree -- mannager 界面里的
+        self.__gold_var = StringVar(value = '')
+        self.__silver_var = StringVar(value = '')
+        self.__bronze_var = StringVar(value = '')
 
+        self.question_config = {
+        '比赛ID/名称' : {'type' : 'text'},
+        '金牌/国家代码': {'type':'multi-part',
+                          'cols' : [
+            {'type': 'text'},
+            {'type': 'label', 'text': '运动员名称'},
+            {'type': 'text'},
+            {'type': 'button', 'text': '精彩时刻', 'command' : lambda : self.__choice__(1)}
+            ]},
+        '银牌/国家代码': {'type':'multi-part',
+                          'cols' : [
+            {'type': 'text'},
+            {'type': 'label', 'text': '运动员名称'},
+            {'type': 'text'},
+            {'type': 'button', 'text': '精彩时刻', 'command' : lambda : self.__choice__(2)}
+            ]},
+        '铜牌/国家代码': {'type':'multi-part',
+                          'cols' : [
+            {'type': 'text'},
+            {'type': 'label', 'text': '运动员名称'},
+            {'type': 'text'},
+            {'type': 'button', 'text': '精彩时刻', 'command' : lambda : self.__choice__(3)}
+            ]},
+        }
+
+    def __choice__(self, _cls):
+        file_path = askopenfilename(filetypes = [("MP4 files", "*.mp4"), ("All files", "*.*")])
+        if file_path:
+            if (_cls == 1):
+                self.__gold_var.set(file_path)
+            elif (_cls == 2):
+                self.__silver_var.set(file_path)
+            elif (_cls == 3):
+                self.__bronze_var.set(file_path)
 
     def add(self, **kwags):
-        win = AskUserQuestionDialog(columns = self.question_config,
+        win = AskUserQuestionDialog(part_dict = self.question_config,
                                     name = '新增奖牌信息'
                                     )
         win.wait_window()
-        if win.result:
-            medal_node = Medal_rank(*win.result)
-            medal_node.count = medal_node.gold + medal_node.silver + medal_node.bronze
-            # # 提交数据库
+
+        record_path = [self.__gold_var.get(), self.__silver_var.get(), self.__bronze_var.get()]
+
+        if win.result and all(record_path):
+            race_id =  win.result[0]
+            gold_code, gold_player = win.result[1]
+            silver_code, silver_player = win.result[2]
+            bronze_code, bronze_player = win.result[3]
             try:
-                self.__service.insert_medal(medal_node)
-            except Exception:
-                messagebox.showinfo('提示', '添加失败, 比赛ID重复')
-            messagebox.showinfo('提示', '添加成功')
-            self.treeview.insert_single(medal_node)
-            self.main_tree.update()
-            self.main_tree.insert_single(medal_node)
-            self.main_tree.update()
+                m = MedalInsertResponse(race_id = race_id,
+                                        gold_code = gold_code,
+                                        gold_player = gold_player,
+                                        silver_code = silver_code,
+                                        silver_player = silver_player,
+                                        bronze_code = bronze_code,
+                                        bronze_player = bronze_player
+                                        )
+            except ValueError:
+                messagebox.showinfo('提示', '添加失败, 请检查信息是否完整')
+                return
+
+
+            race_name = self.__service.update_medal(m)
+            print(race_name)
+            print(type(race_name))
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                executor.submit(copy_and_rename_files, record_path, race_id, race_name,
+                                [gold_player, silver_player, bronze_player]
+                                )
+
+
+        # medal_node = Medal_rank(*win.result)
+            # medal_node.count = medal_node.gold + medal_node.silver + medal_node.bronze
+            # # # 提交数据库
+            # try:
+            #     self.__service.insert_medal(medal_node)
+            # except Exception:
+            #     messagebox.showinfo('提示', '添加失败, 比赛ID重复')
+            # messagebox.showinfo('提示', '添加成功')
+            # self.treeview.insert_single(medal_node)
+            # self.main_tree.update()
+            # self.main_tree.insert_single(medal_node)
+            # self.main_tree.update()
         else:
-            messagebox.showinfo('提示', '添加失败')
+            messagebox.showinfo('提示', '添加失败, 请检查信息是否完整')
 
 
     def remove(self, **kwags):
@@ -315,7 +381,7 @@ class MedalButtonCommand(Ui_Function):
             question_name = list(self.question_config.keys())[column_index]
             # 生成提问窗口
             column = {question_name: self.question_config[question_name]}
-            win = AskUserQuestionDialog(columns = column,
+            win = AskUserQuestionDialog(part_dict = column,
                                         name = f'修改 {question_name}')
             win.wait_window()
 
@@ -395,7 +461,7 @@ class AdminButtonCommand(Ui_Function):
         self.treeview = self.parent.treeview         # 子界面的tree -- mannager 界面里的
 
     def add(self, **kwags):
-        win = AskUserQuestionDialog(columns = self.question_config,
+        win = AskUserQuestionDialog(part_dict = self.question_config,
                                     name = '新增管理员用户'
                                     )
         win.wait_window()
@@ -445,7 +511,7 @@ class AdminButtonCommand(Ui_Function):
                 return
             question_name = list(self.question_config.keys())[column_index]
             column = {question_name: self.question_config[question_name]}
-            win = AskUserQuestionDialog(columns = column,
+            win = AskUserQuestionDialog(part_dict = column,
                                         name = f'修改 {question_name}')
             win.wait_window()
             if (win.result is not None):

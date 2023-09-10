@@ -12,7 +12,8 @@ from utils.GlobalStatic import GlobalResources
 from ui.common.RaceTreeview import RaceTreeview
 from ui.common.UserTreeview import UserTreeview
 from tkinter import Toplevel
-from services.Players.command import RaceMannageButtonCommand
+from services.Players.command import RaceMannageButtonCommand, RewardMannageButtonCommand
+
 
 class PlayerWindow(PlayerDialogWindow):
     def __init__(self, parent, UserInfo, **kwargs):
@@ -116,10 +117,14 @@ class PlayerWindow(PlayerDialogWindow):
             case ColumnName.reward:
                 dialog.setup_ui(RewardTreeview, init_data = data, init_command = False)
                 Button_event = RewardMannageButtonCommand(dialog,
+                                                          user_config = self.__static['user_config'],
+                                                          data_node = data,
+                                                          parent_self = self
+                                                          )
             case _:
                 Button_event = None
 
-        dialog.setup_func(Button_event, all_ = False)
+        dialog.setup_func(Button_event, all_ = False if ColumnName.player == function else 'tree')
         dialog.pack()
         dialog.mainloop()
 
