@@ -1,7 +1,9 @@
 from db.DatabaseConnection import DatabaseConnection
+from models.RewardRecord import RewardRecord
 from models.competition import Competition
 from typing import List
 from response.competition import CompetitionsResponse
+from response.reward import RewardRecordResponse
 
 
 class CompetitionsService(DatabaseConnection):
@@ -11,9 +13,15 @@ class CompetitionsService(DatabaseConnection):
         super(CompetitionsService, self).__init__()
 
     def sigh_up_race(self, race_node):
-        sql = """INSERT INTO signUp_race (race_id, player_id) VALUES (?, ?)"""
-        self.execute(sql, args = (race_node.race_id, race_node.player_id),
-                     commit = True)
+        sql = """INSERT OR IGNORE INTO signUp_race (race_id, player_id) VALUES (?, ?)"""
+        cur = self.execute(sql, args = (race_node.race_id, race_node.player_id), commit = True)
+
+        if cur.rowcount == 0:
+            raise Exception("数据已存在，无法插入")
+        else:
+            race_sql = """SELECT * FROM competitions  WHERE  competition_id = ?"""
+            cur = self.execute(race_sql, args = (race_node.race_id,), ret = 'one')
+            return cur
 
     def delete_race_sighup(self, race_node):
         sql = """DELETE FROM signUp_race WHERE race_id = ? AND player_id = ?"""
@@ -25,6 +33,11 @@ FROM signUp_race s
 JOIN competitions c ON s.race_id = c.competition_id
 WHERE s.player_id = ?"""
         return [Competition(*v) for v in self.execute(sql, args = (play_id,), ret = 'all')]
+
+    def query_reward_by_playID(self, play_id):
+        sql = """SELECT   race_id, race_name FROM reward_record WHERE player_id = ?"""
+        return [RewardRecordResponse(*v) for v in self.execute(sql, args = (play_id,), ret = 'all')]
+
 
     def insert_competition(self, competition: Competition):
         sql = f"""INSERT INTO {self.__tablename__} (competition_id, time, main_event, 

@@ -33,3 +33,6 @@ class PlayerService(DatabaseConnection):
 
     def query_race_by_playID(self, play_id):
         return self.__race.query_race_by_playID(play_id)
+
+    def query_reward_by_playID(self, play_id):
+        return self.__race.query_reward_by_playID(play_id)

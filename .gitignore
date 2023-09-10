@@ -144,3 +144,4 @@ cython_debug/
 
 ./*.zip
 *.zip
+test.py

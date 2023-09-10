@@ -49,7 +49,6 @@ class TreeViewUtils(Treeview):
             value = self.item(item, "values")
             return value[col], col, value, item  # 回传双击的行 + 列的值，还有列的下标，最后返回全部数据
         except Exception as E:
-            print(E)
             raise ValueError('没有选中任何元素')
 
     def get_choice_RowData(self, ret_type = 'values', value_type = 'values'):

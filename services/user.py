@@ -59,6 +59,6 @@ class UserService(DatabaseConnection):
         self.execute(sql, args = (Response.public_userid,), commit = True)
     def modify_userinfo(self, respose : UserModifyResponse):
         sql = "UPDATE users SET username = ?, user_contact = ? WHERE public_userid=?"
-        print(f'response: {(respose.username, respose.public_userid, respose.user_contact ,)}')
+
         self.execute(sql, args = (respose.username, respose.user_contact, respose.public_userid, ), commit = True)
 

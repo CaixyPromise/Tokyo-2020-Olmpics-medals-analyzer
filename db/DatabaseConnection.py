@@ -46,14 +46,13 @@ class DatabaseConnection:
                 cur.execute(sql)
             if (commit):
                 self.commit(cur)
-                return True
             if (ret): # if you need return something.
                 if (ret == 'all'):   # return all.
                     return cur.fetchall()
                 elif (ret == 'one'): # return once.
                     return cur.fetchone()
             else:
-                return True
+                return cur
         else:
             raise sqlite3.OperationalError('没有连接数据库')
     def fetchall(self, cur):

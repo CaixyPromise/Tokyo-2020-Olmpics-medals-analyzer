@@ -1,6 +1,7 @@
 import difflib
 from tkinter.messagebox import showerror
 from ui.PlayerWindow import PlayerDialogWindow
+from ui.common.RewardTreeview import RewardTreeview
 from utils.make_image import make_image
 from services.Players.Player import PlayerService
 from copy import deepcopy
@@ -18,11 +19,11 @@ class PlayerWindow(PlayerDialogWindow):
         super(PlayerWindow, self).__init__(parent)
         self.__db = PlayerService()
         self.__static = GlobalResources()
+        self.__User = UserInfo
         self.get_db()
         self.init_medalRank()
         self.bind_function()
         self.init_button_function()
-        self.__User = UserInfo
 
     @staticmethod
     def init_glodRank(medal_rank):
@@ -110,8 +111,11 @@ class PlayerWindow(PlayerDialogWindow):
             case ColumnName.player:
                 dialog.setup_ui(RaceTreeview, init_data = data)
                 Button_event = RaceMannageButtonCommand(dialog,
-                                                        tree = self.race_tree,
-                                                        user_config = self.__static['info'])
+                                                        tree = self.play_race_tree,
+                                                        user_config = self.__static['user_config'])
+            case ColumnName.reward:
+                dialog.setup_ui(RewardTreeview, init_data = data, init_command = False)
+                Button_event = RewardMannageButtonCommand(dialog,
             case _:
                 Button_event = None
 
@@ -121,11 +125,18 @@ class PlayerWindow(PlayerDialogWindow):
 
     def init_button_function(self):
         self.race_mannageBtn.config(
-            command = lambda: self.setup_DialogWindow(self.__db.query_race_by_playID(self.__User.username), ColumnName.player)
-            )
-        # self.team_mannageBtn.config(
-        #     command = lambda: self.setup_DialogWindow(self.__db.query_all_team(), ColumnName.team))
+            command = lambda: self.setup_DialogWindow(
+                    self.__db.query_race_by_playID(self.__User.username),
+                    ColumnName.player
+                    )
+                )
         self.exit_systemBTN.config(command = lambda: [exit(0)])
+        self.reward_mannageBtn.config(
+                command = lambda: self.setup_DialogWindow(
+                        self.__db.query_reward_by_playID(self.__User.username),
+                        ColumnName.reward
+                        )
+                )
 
     def get_db(self):
         # 获取奖牌榜
@@ -139,3 +150,4 @@ class PlayerWindow(PlayerDialogWindow):
         self.medalRank_tree.insert_manny(self.__medal_rank)
         self.goldRank_tree.insert_manny(self.__gold_rank)
         self.race_tree.insert_manny(self.__db.query_all_race())
+        self.play_race_tree.insert_manny(self.__db.query_race_by_playID(self.__User.username))

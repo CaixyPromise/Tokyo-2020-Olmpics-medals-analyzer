@@ -17,54 +17,51 @@ class MannageDialogWindow(ttk.Frame):
 
     def setup_func(self, function, all_ = True):
         self.function = function
-        if (all_):
+        if (all_ is True):
             self.add_button.config(command = self.function.add)
             self.delete_button.config(command = self.function.remove)
             self.treeview.bind('<Double-1>', lambda event: self.function.modify(event = event))
             self.search_button.config(command = self.function.search)
             self.BacthAdd_button.config(command = self.function.manny)
             self.template_button.config(command = self.function.template)
+        elif (all_ == 'tree'):
+            self.treeview.bind('<Double-1>', lambda event: self.function.play(event = event))
         else:
             self.add_button.config(command = self.function.add)
             self.delete_button.config(command = self.function.remove)
             self.treeview.bind('<Double-1>', lambda event: self.function.modify(event = event))
             self.search_button.config(command = self.function.search)
 
-    def get_choice_columnDataByrow(self, event = None):
-        try:
-            return self.treeview.get_choice_columnData()
-        except Exception as E:
-            showerror('没有选中值', '请先在左侧选中值')
 
-    def get_choice_RowData(self, ret_type = 'all', value_type = 'values'):
-        try:
-            return self.treeview.get_choice_RowData(ret_type)
-        except Exception as E:
-            showerror('没有选中值', '请先在左侧选中值')
 
-    def setup_ui(self, tree, init_data):
+    def setup_ui(self, tree, init_data, init_command = True):
         left_frame = ttk.Frame(self)
-        left_frame.pack(side="left", fill="y", expand=True)
+        if (init_command):
+
+            left_frame.pack(side="left", fill="y", expand=True)
+        else:
+            left_frame.pack(fill="both", expand=True)
         self.treeview = tree(left_frame)
-        right_frame = ttk.Frame(self)
-        right_frame.pack(side="right", fill="y", expand=True)
-        self.add_button = ttk.Button(right_frame, text=f"添加{self.app}")
-        self.add_button.pack(padx = (10, 10), pady = (10, 10), fill = 'y')
 
-        self.template_button = ttk.Button(right_frame, text=f"下载添加{self.app}模板")
-        self.template_button.pack(padx = (10, 10), pady = (10, 10), fill = 'y')
+        if (init_command):
+            right_frame = ttk.Frame(self)
+            right_frame.pack(side="right", fill="y", expand=True)
+            self.add_button = ttk.Button(right_frame, text=f"添加{self.app}")
+            self.add_button.pack(padx = (10, 10), pady = (10, 10), fill = 'y')
 
-        self.BacthAdd_button = ttk.Button(right_frame, text = f"批量添加{self.app}")
-        self.BacthAdd_button.pack(padx = (10, 10), pady = (10, 10), fill = 'y')
+            self.template_button = ttk.Button(right_frame, text=f"下载添加{self.app}模板")
+            self.template_button.pack(padx = (10, 10), pady = (10, 10), fill = 'y')
 
-        self.delete_button = ttk.Button(right_frame, text=f"删除{self.app}")
-        self.delete_button.pack(padx = (10, 10), pady = (10, 10), fill = 'y')
-        
-        self.search_button = ttk.Button(right_frame, text=f"查找{self.app}")
-        self.search_button.pack(padx = (10, 10), pady = (10, 10), fill = 'y')
-        self.search_entry = ttk.Entry(right_frame)
-        self.search_entry.pack(padx = (10, 10), pady = (10, 10), fill = 'y')
+            self.BacthAdd_button = ttk.Button(right_frame, text = f"批量添加{self.app}")
+            self.BacthAdd_button.pack(padx = (10, 10), pady = (10, 10), fill = 'y')
 
+            self.delete_button = ttk.Button(right_frame, text=f"删除{self.app}")
+            self.delete_button.pack(padx = (10, 10), pady = (10, 10), fill = 'y')
+
+            self.search_button = ttk.Button(right_frame, text=f"查找{self.app}")
+            self.search_button.pack(padx = (10, 10), pady = (10, 10), fill = 'y')
+            self.search_entry = ttk.Entry(right_frame)
+            self.search_entry.pack(padx = (10, 10), pady = (10, 10), fill = 'y')
         if (init_data):
             self.treeview.insert_manny(init_data)
 

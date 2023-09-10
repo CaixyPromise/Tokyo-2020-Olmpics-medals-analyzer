@@ -35,8 +35,7 @@ class ReadTemplate:
 
         # 检查列名是否匹配
         if tuple(first_row) != columns:
-            print(first_row)
-            print(columns)
+
             raise Exception('列名不匹配，请检查模板')
 
         for row in self.ws.iter_rows(min_row=2, values_only=True):  # 跳过列名
@@ -47,7 +46,6 @@ class ReadTemplate:
             # 检查是否所有字段都为空，如果是，则跳过该行
             if all(cell == '' for cell in cleaned_row):
                 continue
-            print(cleaned_row)
             Append(response(*cleaned_row))
 
         return dataList

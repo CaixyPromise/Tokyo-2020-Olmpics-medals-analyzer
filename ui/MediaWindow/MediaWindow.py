@@ -313,7 +313,8 @@ class VideoPlayer:
 
 
 class MediaPlayerDialogWindow:
-    def __init__(self, root, file, **kwargs):
+    def __init__(self, file, **kwargs):
+        root = Tk()
         player = VideoPlayer(root, file, **kwargs)
 
         try:

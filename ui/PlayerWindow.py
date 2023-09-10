@@ -50,8 +50,8 @@ class PlayerDialogWindow(ttk.Frame):
     def setup_command(self):
         self.race_mannageBtn = ttk.Button(self.command_frame, text = "我的比赛管理")
         self.race_mannageBtn.grid(row = 0, column = 0, padx = 10, pady = 10, sticky = tk.NSEW)
-        self.team_mannageBtn = ttk.Button(self.command_frame, text = "我的夺冠时刻")
-        self.team_mannageBtn.grid(row = 0, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
+        self.reward_mannageBtn = ttk.Button(self.command_frame, text = "我的夺冠时刻")
+        self.reward_mannageBtn.grid(row = 0, column = 1, padx = 10, pady = 10, sticky = tk.NSEW)
         self.exit_systemBTN = ttk.Button(self.command_frame, text = "退出系统")
         self.exit_systemBTN.grid(row = 1, column = 0, columnspan = 1, padx = 10, pady = 10, sticky = tk.NSEW)
 
@@ -126,3 +126,24 @@ class PlayerDialogWindow(ttk.Frame):
         self.race_tree.configure(yscrollcommand = self.scrollbar.set)
         self.notebook.add(self.race_info_frame, text = "比赛项目信息")
         self.scrollbar.config(command = self.race_tree.yview)
+
+
+        self.play_race_info_frame = ttk.Frame(self.notebook)
+        self.play_race_info_frame.pack(expand = True, fill = "both")
+        play_race_searchFrame = ttk.Frame(self.play_race_info_frame)
+        play_race_searchFrame.pack(side = "top", fill = "x", expand = True)
+        ttk.Label(play_race_searchFrame, text = "比赛项目搜索", font = ('Helvetica', 16)).pack(side = "left")
+        self.play_raceRankSearch_entry = ttk.Entry(play_race_searchFrame, width = 80)
+        self.play_raceRankSearch_entry.pack(side = "left", fill = "x", expand = True, padx = 5, pady = 5)
+        self.play_raceRankSearch_btn = ttk.Button(play_race_searchFrame, text = "搜索")
+        self.play_raceRankSearch_btn.pack(side = "left", fill = "x", expand = True, padx = 5, pady = 5)
+
+
+        self.play_scrollbar = ttk.Scrollbar(self.play_race_info_frame, )
+        self.play_scrollbar.pack(side = 'right', fill = 'y')
+        self.play_race_tree = RaceTreeview(self.play_race_info_frame)
+        # self.race_infoFrame.grid(row = 0, column = 0, padx = 10, pady = 10)
+        self.play_scrollbar.config(command = self.play_race_tree.yview)
+        self.play_race_tree.configure(yscrollcommand = self.play_scrollbar.set)
+        self.notebook.add(self.play_race_info_frame, text = "我的比赛信息")
+        self.play_scrollbar.config(command = self.play_race_tree.yview)

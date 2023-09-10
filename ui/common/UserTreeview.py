@@ -14,5 +14,5 @@ class UserTreeview(TreeViewUtils):
                                                         dataNode.user_contact))
 
     def insert_manny(self, dataList):
-        print(dataList)
+
         [self.insert_single(dataNode) for dataNode in dataList]

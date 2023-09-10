@@ -31,7 +31,6 @@ class App(LoginWindow):
 
         result =  self.__login_services.login(LoginResponse(public_id = username, password = password))
         if result: # 密码正确
-            print(result)
             self.enter_index(result)
         else:   # 密码错误
             showerror(title = '错误', message = '用户名或密码错误')
@@ -96,7 +95,6 @@ def main():
    # 获取屏幕尺寸，并以此为依据设置窗体居中
     width = root.winfo_screenwidth()
     height = root.winfo_screenheight()
-
     # 创建应用程序
     app = App(root, width, height)
     app.pack(fill = "both", expand = True)
