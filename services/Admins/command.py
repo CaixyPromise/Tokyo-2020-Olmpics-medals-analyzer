@@ -338,26 +338,12 @@ class MedalButtonCommand(Ui_Function):
 
 
             race_name = self.__service.insert_medal(m)
-            print(race_name)
-            print(type(race_name))
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 executor.submit(copy_and_rename_files, record_path, race_id, race_name,
                                 [gold_player, silver_player, bronze_player]
                                 )
-
-
-        # medal_node = Medal_rank(*win.result)
-            # medal_node.count = medal_node.gold + medal_node.silver + medal_node.bronze
-            # # # 提交数据库
-            # try:
-            #     self.__service.insert_medal(medal_node)
-            # except Exception:
-            #     messagebox.showinfo('提示', '添加失败, 比赛ID重复')
             messagebox.showinfo('提示', '添加成功')
             self.treeview.insert_single(m)
-            # self.main_tree.update()
-            # self.main_tree.insert_single(m)
-            # self.main_tree.update()
         else:
             messagebox.showinfo('提示', '添加失败, 请检查信息是否完整')
 
