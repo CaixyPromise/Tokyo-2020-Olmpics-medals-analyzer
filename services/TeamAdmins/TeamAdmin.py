@@ -22,6 +22,12 @@ class TeamAdminService(DatabaseConnection):
     def query_all_race(self):
         return self.__race.query_all_competitions()
 
+    def query_user_by_id(self, coutry_id):
+        return self.__user.query_user_by_id(coutry_id)
+
+    def query_race_team(self):
+        return self.__race.query_race_team()
+
     def insert_player(self, response):
         return self.__user.inser_user(response)
 

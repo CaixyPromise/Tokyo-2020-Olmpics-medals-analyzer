@@ -1,5 +1,8 @@
 import tkinter.ttk as ttk
 import tkinter as tk
+
+from ui.common.MedalInfoTreeview import MedalRaceInfoTreeview
+from ui.common.RaceTeamTreeview import RaceTeamTreeview
 from utils.MediaViewer.MediaViewer import  MediaViewer
 from tkinter import font
 from ui.common.RankTreeview import RankTreeview
@@ -147,3 +150,48 @@ class PlayerDialogWindow(ttk.Frame):
         self.play_race_tree.configure(yscrollcommand = self.play_scrollbar.set)
         self.notebook.add(self.play_race_info_frame, text = "我的比赛信息")
         self.play_scrollbar.config(command = self.play_race_tree.yview)
+
+
+        # 各个国家参赛报名比赛信息
+        self.race_team_info_frame = ttk.Frame(self.notebook)
+        self.race_team_info_frame.pack(expand = True, fill = "both")
+        race_team_searchFrame = ttk.Frame(self.race_team_info_frame)
+        race_team_searchFrame.pack(side = "top", fill = "x", expand = True)
+        ttk.Label(race_team_searchFrame, text = "队员搜索", font = ('Helvetica', 16)).pack(side = "left")
+        self.race_teamSearch_entry = ttk.Entry(race_team_searchFrame, width = 80)
+        self.race_teamSearch_entry.pack(side = "left", fill = "x", expand = True, padx = 5, pady = 5)
+        self.race_teamSearch_btn = ttk.Button(race_team_searchFrame, text = "搜索")
+        self.race_teamSearch_btn.pack(side = "left", fill = "x", expand = True, padx = 5, pady = 5)
+
+        self.race_teamscrollbar = ttk.Scrollbar(self.race_team_info_frame, )
+        self.race_teamscrollbar.pack(side = 'right', fill = 'y')
+        # 设置一个TreeViewUtils布局，用于显示比赛项目信息，列名：比赛ID、时间、地点、比赛名称、比赛类型，并插入到notebook中
+        self.race_team_tree = RaceTeamTreeview(self.race_team_info_frame)
+        # self.race_infoFrame.grid(row = 0, column = 0, padx = 10, pady = 10)
+        self.race_teamscrollbar.config(command = self.race_team_tree.yview)
+        self.race_team_tree.configure(yscrollcommand = self.race_teamscrollbar.set)
+        self.notebook.add(self.race_team_info_frame, text = "参赛队伍信息")
+        self.race_teamscrollbar.config(command = self.race_team_tree.yview)
+
+
+        # 各个项目奖牌信息
+        self.medal_race_info_frame = ttk.Frame(self.notebook)
+        self.medal_race_info_frame.pack(expand = True, fill = "both")
+        medal_race_searchFrame = ttk.Frame(self.medal_race_info_frame)
+        medal_race_searchFrame.pack(side = "top", fill = "x", expand = True)
+        ttk.Label(medal_race_searchFrame, text = "队员搜索", font = ('Helvetica', 16)).pack(side = "left")
+        self.medal_raceSearch_entry = ttk.Entry(medal_race_searchFrame, width = 80)
+        self.medal_raceSearch_entry.pack(side = "left", fill = "x", expand = True, padx = 5, pady = 5)
+        self.medal_raceSearch_btn = ttk.Button(medal_race_searchFrame, text = "搜索")
+        self.medal_raceSearch_btn.pack(side = "left", fill = "x", expand = True, padx = 5, pady = 5)
+
+        self.medal_racescrollbar = ttk.Scrollbar(self.medal_race_info_frame, )
+        self.medal_racescrollbar.pack(side = 'right', fill = 'y')
+        # 设置一个TreeViewUtils布局，用于显示比赛项目信息，列名：比赛ID、时间、地点、比赛名称、比赛类型，并插入到notebook中
+        self.medal_race_tree = MedalRaceInfoTreeview(self.medal_race_info_frame)
+        # self.race_infoFrame.grid(row = 0, column = 0, padx = 10, pady = 10)
+        self.medal_racescrollbar.config(command = self.medal_race_tree.yview)
+        self.medal_race_tree.configure(yscrollcommand = self.medal_racescrollbar.set)
+        self.notebook.add(self.medal_race_info_frame, text = "参赛队伍信息")
+        self.medal_racescrollbar.config(command = self.medal_race_tree.yview)
+

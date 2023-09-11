@@ -83,28 +83,28 @@ class PlayerWindow(PlayerDialogWindow):
         else:
             showerror('没有找到', '没有找到与输入相似的项')
 
+    def bind_search_function(self, button, entry, tree, column_index = None):
+        if column_index:
+            button.config(command = lambda: self.search(entry.get().upper(), tree, column_index = column_index))
+            entry.bind('<Return>', lambda x: self.search(entry.get().upper(), tree, column_index = column_index))
+        else:
+            button.config(command = lambda: self.search(entry.get().upper(), tree))
+            entry.bind('<Return>', lambda x: self.search(entry.get().upper(), tree))
+
     def bind_function(self):
-        self.goldRankSearch_button.config(command = lambda : self.search(self.goldRankSearch_entry.get().upper(),
-                                                                         self.goldRank_tree,
-                                                                         column_index = (0, 1)),)
-        self.medalRankSearch_btn.config(command = lambda : self.search(self.medalRankSearch_entry.get().upper(),
-                                                                       self.medalRank_tree,
-                                                                         column_index = (0, 1)))
-        self.raceRankSearch_btn.config(command = lambda : self.search(self.raceRankSearch_entry.get().upper(),
-                                                                      self.race_tree,
-                                                                         column_index = (0, 2, 3, 4)))
-        self.goldRankSearch_entry.bind('<Return>', lambda x:self.search(self.goldRankSearch_entry.get().upper(),
-                                                                         self.goldRank_tree,
-                                                                         column_index = (0, 1)))
-        self.medalRankSearch_entry.bind('<Return>', lambda x : self.search(self.medalRankSearch_entry.get().upper(),
-                                                                       self.medalRank_tree,
-                                                                         column_index = (0, 1)))
-        self.raceRankSearch_entry.bind('<Return>', lambda x:self.search(self.raceRankSearch_entry.get().upper(),
-                                                                      self.race_tree,
-                                                                         column_index = (0, 2, 3, 4)))
+        self.bind_search_function(self.goldRankSearch_button, self.goldRankSearch_entry, self.goldRank_tree,
+                             column_index = (0, 1)
+                             )
+        self.bind_search_function(self.medalRankSearch_btn, self.medalRankSearch_entry, self.medalRank_tree,
+                             column_index = (0, 1)
+                             )
+        self.bind_search_function(self.raceRankSearch_btn, self.raceRankSearch_entry, self.race_tree,
+                             column_index = (0, 2, 3, 4)
+                             )
+        self.bind_search_function(self.medal_raceSearch_btn, self.medal_raceSearch_entry, self.medal_race_tree)
 
     def setup_DialogWindow(self, data, function):
-        ret_val = tk.Variable()
+
 
         win = Toplevel(self)
         dialog = MannageDialogWindow(win, app_name = function, )
@@ -156,3 +156,5 @@ class PlayerWindow(PlayerDialogWindow):
         self.goldRank_tree.insert_manny(self.__gold_rank)
         self.race_tree.insert_manny(self.__db.query_all_race())
         self.play_race_tree.insert_manny(self.__db.query_race_by_playID(self.__User.username))
+        self.race_team_tree.insert_manny(self.__db.query_race_team())
+        self.medal_race_tree.insert_many(self.__db.query_reward())

@@ -1,9 +1,9 @@
 from db.DatabaseConnection import DatabaseConnection
-from models.RewardRecord import RewardRecord
 from models.competition import Competition
 from typing import List
 from response.competition import CompetitionsResponse
 from response.reward import RewardRecordResponse, MedalLogResponse
+from response.competition import RaceTeamInfo
 
 
 class CompetitionsService(DatabaseConnection):
@@ -13,8 +13,8 @@ class CompetitionsService(DatabaseConnection):
         super(CompetitionsService, self).__init__()
 
     def sigh_up_race(self, race_node):
-        sql = """INSERT OR IGNORE INTO signUp_race (race_id, player_id) VALUES (?, ?)"""
-        cur = self.execute(sql, args = (race_node.race_id, race_node.player_id), commit = True)
+        sql = """INSERT OR IGNORE INTO signUp_race (race_id, player_id, country_id) VALUES (?, ?, ?)"""
+        cur = self.execute(sql, args = (race_node.race_id, race_node.player_id, race_node.country_id), commit = True)
 
         if cur.rowcount == 0:
             raise Exception("数据已存在，无法插入")
@@ -33,6 +33,7 @@ FROM signUp_race s
 JOIN competitions c ON s.race_id = c.competition_id
 WHERE s.player_id = ?"""
         return [Competition(*v) for v in self.execute(sql, args = (play_id,), ret = 'all')]
+
 
     def query_reward_by_playID(self, play_id):
         sql = """SELECT   race_id, race_name FROM reward_record WHERE player_id = ?"""
@@ -59,6 +60,18 @@ WHERE s.player_id = ?"""
         sql = f"DELETE FROM {self.__tablename__} WHERE competition_id=?"
 
         self.execute(sql, args = (competition_id,), commit = True)
+
+    def query_race_team(self, ):
+        sql = """
+        SELECT 
+        s.race_id, c.competition_name,
+        u.public_userid, s.country_id
+        FROM signUp_race AS s 
+        JOIN competitions AS c ON s.race_id = c.competition_id 
+        JOIN users AS u ON s.player_id = u.username;
+"""
+        return [RaceTeamInfo(*v) for v in self.execute(sql, ret = 'all')]
+
 
     def query_all_competitions(self):
         sql = f"SELECT * FROM {self.__tablename__}"

@@ -22,3 +22,22 @@ class MedalInsertResponse:
 
     def to_list(self):
         return [getattr(self, f.name) for f in fields(self)]
+
+@dataclass
+class MedalRaceInfo:
+    race_name : str
+    gold_country_code: str
+    gold_player_name: str
+    silver_country_code: str
+    silver_player_name: str
+    bronze_country_code: str
+    bronze_player_name: str
+
+    def to_tuple(self):
+        return astuple(self)
+
+    def to_dict(self):
+        return asdict(self)
+
+    def to_list(self):
+        return list(self.to_tuple())

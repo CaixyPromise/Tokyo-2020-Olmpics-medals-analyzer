@@ -1,5 +1,6 @@
 from db.DatabaseConnection import DatabaseConnection
 from models.RewardRecord import MedalLog
+from response.medal import MedalRaceInfo
 from response.rank import MedalRankResponse
 from models.medal_Rank import Medal_rank
 from typing import List
@@ -33,6 +34,25 @@ class MedalRankService(DatabaseConnection):
     def query_rank_by_cid(self, cid):
         sql = f"SELECT * FROM {self.__tablename__} WHERE countryid=?"
         return self.execute(sql, args = (cid,), ret = 'all')
+
+    def query_reward(self):
+        sql = """
+    SELECT 
+        medal_log.race_name,
+        medal_log.gold_country_code,
+        users1.public_userid AS gold_player_public_id,
+        medal_log.silver_country_code,
+        users2.public_userid AS silver_player_public_id,
+        medal_log.bronze_country_code,
+        users3.public_userid AS bronze_player_public_id
+    FROM 
+        medal_log
+    LEFT JOIN users AS users1 ON medal_log.gold_player_id = users1.username
+    LEFT JOIN users AS users2 ON medal_log.silver_player_id = users2.username
+    LEFT JOIN users AS users3 ON medal_log.bronze_player_id = users3.username
+"""
+        result = self.execute(sql, ret = 'all')
+        return [MedalRaceInfo(*row) for row in result]
 
     def insert_medal(self, response):
         # 检查 race_id 是否在 competitions 表中

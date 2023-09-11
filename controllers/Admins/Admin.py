@@ -24,7 +24,6 @@ class AdminWindow(AdminDialogWindow):
         self.init_button_function()
 
     def setup_DialogWindow(self, data, function):
-        ret_val = tk.Variable()
 
         win = Toplevel(self)
         dialog = MannageDialogWindow(win, app_name = function,)

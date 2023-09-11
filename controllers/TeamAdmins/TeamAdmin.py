@@ -20,9 +20,13 @@ class TeamAdminWindow(TeamAdminDialogWindow):
         super(TeamAdminWindow, self).__init__(parent)
         self.__db = TeamAdminService()
         self.__static = GlobalResources()
+        self.__user_config = self.__static['user_config']
         self.get_db()
         self.init_medalRank()
         self.bind_function()
+        self.init_button_function()
+
+
 
     @staticmethod
     def init_glodRank(medal_rank):
@@ -83,26 +87,26 @@ class TeamAdminWindow(TeamAdminDialogWindow):
         else:
             showerror('没有找到', '没有找到与输入相似的项')
 
+    def bind_search_function(self, button, entry, tree):
+        button.config(command = lambda: self.search(entry.get().upper(), tree))
+        entry.bind('<Return>', lambda x: self.search(entry.get().upper(), tree))
+
     def bind_function(self):
-        self.goldRankSearch_button.config(command = lambda : self.search(self.goldRankSearch_entry.get().upper(),
-                                                                         self.goldRank_tree))
-        self.medalRankSearch_btn.config(command = lambda : self.search(self.medalRankSearch_entry.get().upper(),
-                                                                       self.medalRank_tree))
-        self.goldRankSearch_entry.bind('<Return>', lambda x:self.search(self.goldRankSearch_entry.get().upper(),
-                                                                         self.goldRank_tree))
-        self.medalRankSearch_entry.bind('<Return>', lambda x : self.search(self.medalRankSearch_entry.get().upper(),
-                                                                       self.medalRank_tree))
+        self.bind_search_function(self.goldRankSearch_button, self.goldRankSearch_entry, self.goldRank_tree)
+        self.bind_search_function(self.medalRankSearch_btn, self.medalRankSearch_entry, self.medalRank_tree)
+        self.bind_search_function(self.countryRankSearch_btn, self.countryRankSearch_entry, self.country_tree)
+        self.bind_search_function(self.race_teamSearch_btn, self.race_teamSearch_entry, self.race_team_tree)
+
     def setup_DialogWindow(self, data, function):
-        ret_val = tk.Variable()
 
         win = Toplevel(self)
         dialog = MannageDialogWindow(win, app_name = function,)
         match function:
-            case ColumnName.race:
+            case ColumnName.country_admin:
                 dialog.setup_ui(UserTreeview, init_data = data)
                 Button_event = InsertPlalyerButtonCommand(dialog,
                                       tree = self.race_tree,
-                                      user_config = self.__static.get('user_config'))
+                                      user_config = self.__static['user_config'])
             case _:
                 Button_event = None
 
@@ -111,10 +115,10 @@ class TeamAdminWindow(TeamAdminDialogWindow):
         dialog.mainloop()
 
     def init_button_function(self):
-        self.race_mannageBtn.config(command = lambda : self.setup_DialogWindow(self.__db.query_all_race(), ColumnName.race))
-        # self.team_mannageBtn.config(command = lambda : self.setup_DialogWindow(self.__db.query_all_team(), ColumnName.team))
-        # self.medal_mannageBtn.config(command = lambda : self.setup_DialogWindow(self.__db.query_medal_rank(), ColumnName.medal))
-        self.exit_sysBtn.config(command = lambda : exit(0))
+        self.race_mannageBtn.config(command = lambda : self.setup_DialogWindow(self.__db.query_user_by_id(
+                self.__user_config.group_id),
+                ColumnName.country_admin))
+        self.exit_sysBtn.config(command = lambda : [exit(0)])
 
     def get_db(self):
         # 获取奖牌榜
@@ -128,3 +132,6 @@ class TeamAdminWindow(TeamAdminDialogWindow):
         self.medalRank_tree.insert_manny(self.__medal_rank)
         self.goldRank_tree.insert_manny(self.__gold_rank)
         self.race_tree.insert_manny(self.__db.query_all_race())
+        self.country_tree.insert_manny(self.__db.query_user_by_id(
+                self.__user_config.group_id))
+        self.race_team_tree.insert_manny(self.__db.query_race_team())

@@ -19,3 +19,16 @@ class CompetitionsResponse:
 
     def to_list(self):
         return [getattr(self, f.name) for f in fields(self)]
+
+@dataclass
+class RaceTeamInfo:
+    race_id : str
+    race_name : str
+    player_name : str
+    player_country : str
+
+    def to_tuple(self):
+        return astuple(self)
+
+    def to_dict(self):
+        return asdict(self)

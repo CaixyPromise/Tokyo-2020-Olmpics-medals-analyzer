@@ -17,6 +17,8 @@ class MannageDialogWindow(ttk.Frame):
 
     def setup_func(self, function, all_ = True):
         self.function = function
+        if (self.function is None):
+            return
         if (all_ is True):
             self.add_button.config(command = self.function.add)
             self.delete_button.config(command = self.function.remove)

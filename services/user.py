@@ -22,6 +22,10 @@ class UserService(DatabaseConnection):
                                   response.user_contact),
                      commit = True
                      )
+    def query_user_by_id(self, coutry_id):
+        sql = """SELECT username, public_userid, user_contact FROM users WHERE group_id = ?"""
+        return [UserResponse(*v) for v in self.execute(sql, args = (coutry_id,), ret = 'all')]
+
     def insert_mannyAdmin(self, dataList : List[UserAddAdminResponse]):
         sql = "INSERT INTO users ( username,public_userid, user_contact, role, group_id, password_hash ) VALUES ( ?, ?, ?, ?, ?, ?)"
         all_data = []

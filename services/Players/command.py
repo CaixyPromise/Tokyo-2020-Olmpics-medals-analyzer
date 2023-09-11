@@ -36,7 +36,9 @@ class RaceMannageButtonCommand(Ui_Function):
             user_choice = win.result
             race_id = race_dict[user_choice[0]]
             user_node = SignUpRace(player_id = self.user_config.username,
-                                   race_id = race_id,)
+                                   race_id = race_id,
+                                   country_id = self.user_config.group_id
+                                   )
             # # 提交数据库
             try:
                 race_info = self.__service.insert_race_sighup(user_node)
