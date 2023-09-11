@@ -3,7 +3,7 @@ from models.RewardRecord import RewardRecord
 from models.competition import Competition
 from typing import List
 from response.competition import CompetitionsResponse
-from response.reward import RewardRecordResponse
+from response.reward import RewardRecordResponse, MedalLogResponse
 
 
 class CompetitionsService(DatabaseConnection):
@@ -38,7 +38,6 @@ WHERE s.player_id = ?"""
         sql = """SELECT   race_id, race_name FROM reward_record WHERE player_id = ?"""
         return [RewardRecordResponse(*v) for v in self.execute(sql, args = (play_id,), ret = 'all')]
 
-
     def insert_competition(self, competition: Competition):
         sql = f"""INSERT INTO {self.__tablename__} (competition_id, time, main_event, 
                   competition_name, competition_type, venue, status) VALUES (?, ?, ?, ?, ?, ?, ?)"""
@@ -49,8 +48,7 @@ WHERE s.player_id = ?"""
                                   competition.competition_type,
                                   competition.venue,
                                   competition.status),
-                     commit = True
-                     )
+                     commit = True)
 
     def insert_manny_competitions(self, competitions : List[Competition]):
         sql = f"""INSERT INTO {self.__tablename__} (competition_id, time, main_event, 

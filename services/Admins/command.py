@@ -1,13 +1,13 @@
 import concurrent.futures
 
 from response.medal import MedalInsertResponse
+from response.reward import MedalLogResponse
 from ui.utils.functions import Ui_Function
 from ui.AskUserQuestionWindow import AskUserQuestionDialog
 from tkinter import messagebox
 from services.Admins.Admin import AdminService
 from models.competition import Competition
 from models.team import NationalTeam
-from models.medal_Rank import Medal_rank
 from models.Users import User
 from tkinter.messagebox import showerror
 from tkinter.filedialog import asksaveasfilename, askopenfilename
@@ -257,11 +257,19 @@ class TeamButtonCommand(Ui_Function):
 
 
 class MedalButtonCommand(Ui_Function):
+    modify_config = {
+        '金牌国家代码' : {'type': 'text'},
+        '金牌运动员ID' : {'type': 'text'},
+        '银牌国家代码' : {'type': 'text'},
+        '银牌运动员ID' : {'type': 'text'},
+        '铜牌国家代码' : {'type': 'text'},
+        '铜牌运动员ID' : {'type': 'text'}
+        }
 
     def __init__(self, parent = None, **kwargs):
         super(MedalButtonCommand, self).__init__(parent, **kwargs)
         self.__service = AdminService()
-        self.main_tree = self.part.get('tree')  # 主界面的tree
+        # self.main_tree = self.part.get('tree')  # 主界面的tree
         self.treeview = self.parent.treeview  # 子界面的tree -- mannager 界面里的
         self.__gold_var = StringVar(value = '')
         self.__silver_var = StringVar(value = '')
@@ -329,7 +337,7 @@ class MedalButtonCommand(Ui_Function):
                 return
 
 
-            race_name = self.__service.update_medal(m)
+            race_name = self.__service.insert_medal(m)
             print(race_name)
             print(type(race_name))
             with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -345,10 +353,10 @@ class MedalButtonCommand(Ui_Function):
             #     self.__service.insert_medal(medal_node)
             # except Exception:
             #     messagebox.showinfo('提示', '添加失败, 比赛ID重复')
-            # messagebox.showinfo('提示', '添加成功')
-            # self.treeview.insert_single(medal_node)
+            messagebox.showinfo('提示', '添加成功')
+            self.treeview.insert_single(m)
             # self.main_tree.update()
-            # self.main_tree.insert_single(medal_node)
+            # self.main_tree.insert_single(m)
             # self.main_tree.update()
         else:
             messagebox.showinfo('提示', '添加失败, 请检查信息是否完整')
@@ -357,13 +365,15 @@ class MedalButtonCommand(Ui_Function):
     def remove(self, **kwags):
         selection = self.treeview.get_choice_RowData('all')
         if (selection is not None):
-            _id = selection[1][0]
+            item, value = selection
             if (messagebox.askyesno('确认', '确定删除？')):
-                self.__service.delete_match(_id)
+                response = MedalLogResponse(*value)
+                medal_node = self.__service.delete_medal_info(response)
                 self.treeview.delete(selection[0])
                 self.treeview.update()
-                self.main_tree.delete(selection[0])
-                self.main_tree.update()
+                # self.main_tree.delete(selection[0])
+                # self.main_tree.update()
+
         return
 
     def modify(self, **kwags):
@@ -372,29 +382,41 @@ class MedalButtonCommand(Ui_Function):
         if (selection is not None):
             # 双击行列的值  值的下标       整行的数据  item
             column_data, column_index, all_data, item = selection
-            if (column_index == -1 or column_index == 5):
-                showerror(title = '提示', message = '不能修改排名或总数')
+            if (column_index == 0 or column_index == 1):
+                showerror(title = '提示', message = '不能修改比赛ID或名称，请前往比赛管理设置')
                 return
             coutry_code = self.treeview.item(item, 'text')
 
-            question_name = ('国家/地区', '国家/地区代码', '金牌', '银牌', '铜牌')
-            question_name = list(self.question_config.keys())[column_index]
+            question_name = list(self.modify_config.keys())[column_index - 2]
             # 生成提问窗口
-            column = {question_name: self.question_config[question_name]}
+            column = {question_name: self.modify_config[question_name]}
             win = AskUserQuestionDialog(part_dict = column,
                                         name = f'修改 {question_name}')
             win.wait_window()
 
+            if win.result is not None:
+                result = win.result[0]
 
-            if (win.result is not None):
-                all_data = [-1] + list(all_data) + [all_data]
-                all_data[column_index] = win.result[0]
-                selection_node = Medal_rank(*all_data)
-                if (column_index in {2, 3, 4, 5}):
-                    selection_node.count = selection_node.gold + selection_node.silver + selection_node.bronze
-                self.__service.modify_medal(selection_node)
-                self.treeview.item(item, values = all_data)
-                self.main_tree.item(item, values = all_data)
+                current_data = MedalLogResponse(*all_data)
+                new_data = MedalLogResponse(*all_data)
+
+                # 创建一个映射，将 column_index 映射到相应的属性名称
+                column_to_attribute = {
+                    2: "gold_country_code",
+                    3: "gold_player_id",
+                    4: "silver_country_code",
+                    5: "silver_player_id",
+                    6: "bronze_country_code",
+                    7: "bronze_player_id",
+                    }
+
+                # 使用 setattr 动态设置属性
+                attr_name = column_to_attribute.get(column_index)
+                if attr_name:
+                    setattr(new_data, attr_name, result)
+                self.__service.update_medal_info(current_data, new_data)
+                self.treeview.item(item, values = new_data.to_tuple())
+                # self.main_tree.item(item, values = new_data)
 
     def search(self, ):
         target_string = self.parent.search_entry.get()
@@ -417,34 +439,6 @@ class MedalButtonCommand(Ui_Function):
             self.treeview.see(most_similar_item)
         else:
             showerror('没有找到', '没有找到与输入相似的项')
-
-
-    def manny(self, **kwags):
-        file_path = askopenfilename(title = '选择 Excel 文件',
-                                    filetypes = [('Excel files', '*.xlsx')]
-                                    )
-        if (file_path):
-            columns = Column.race.value
-            reader = ReadTemplate(file_path)
-            data = reader.read(columns, Competition)
-            self.__service.insert_medal(data)
-            self.treeview.insert_manny(data)
-            self.main_tree.update()
-            self.main_tree.insert_manny(data)
-            self.main_tree.update()
-
-
-    def template(self):
-        options = {
-            'defaultextension': '.xlsx',
-            'filetypes':        [('Excel files', '.xlsx'), ('All files', '.*')],
-            'initialfile':      '批量添加比赛模板.xlsx',
-            'title':            '选择保存位置'
-            }
-        filename = asksaveasfilename(**options)
-        if (filename):
-            writer = MakeTemplate(Column.race.value, filename)
-            writer.make()
 
 
 class AdminButtonCommand(Ui_Function):

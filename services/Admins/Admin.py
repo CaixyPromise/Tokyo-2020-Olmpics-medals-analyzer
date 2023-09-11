@@ -1,4 +1,7 @@
+from typing import List
+
 from db.DatabaseConnection import DatabaseConnection
+from response.reward import MedalLogResponse
 from services.rank.Service import MedalRankService
 from services.races.Service import CompetitionsService
 from services.team.Service import NationalTeamService
@@ -38,10 +41,6 @@ class AdminService(DatabaseConnection):
 
     def query_all_race(self):
         return self.__race.query_all_competitions()
-
-    def insert_medal(self, medalNode):
-        return self.__medal.insert_medal_rank(medalNode)
-
     def modify_medal(self, medalNode):
         return self.__medal.modify_medal_info(medalNode)
 
@@ -89,5 +88,19 @@ class AdminService(DatabaseConnection):
     def query_team_by_name(self, team_name):
         return self.__team.query_team_by_name(team_name)
 
-    def update_medal(self, reponse):
-        return self.__medal.update_medal(reponse)
+    # 新增奖牌
+    def insert_medal(self, reponse):
+        return self.__medal.insert_medal(reponse)
+
+    # 查询奖牌插入日志
+    def query_reward_log(self) -> List[MedalLogResponse]:
+        return self.__medal.query_reward_log()
+
+    # 更新奖牌信息
+    def update_medal_info(self, cur_response:MedalLogResponse,
+                          old_response:MedalLogResponse):
+        return self.__medal.update_medal(cur_response, old_response)
+
+    # 删除奖牌信息
+    def delete_medal_info(self, response, ):
+        return self.__medal.delete_medal_info(response)

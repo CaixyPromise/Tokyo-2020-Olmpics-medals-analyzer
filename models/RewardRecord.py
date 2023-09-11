@@ -23,3 +23,23 @@ class RewardRecord:
                   );
                   CREATE INDEX reward_recode_player_id_index ON {self.__tablename__} (player_id);
                """
+
+
+
+@dataclass
+class MedalLog:
+    log_id: int = field(init=False, default=None)
+    race_id: str
+    race_name: str
+    gold_country_code: str
+    gold_player_id: str
+    silver_country_code: str
+    silver_player_id: str
+    bronze_country_code: str
+    bronze_player_id: str
+
+    def to_tuple(self):
+        return astuple(self)
+
+    def to_dict(self):
+        return asdict(self)

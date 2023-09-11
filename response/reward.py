@@ -15,3 +15,21 @@ class RewardRecordResponse:
 
     def to_dict(self):
         return asdict(self)
+
+
+@dataclass
+class MedalLogResponse:
+    race_id: str
+    race_name: str
+    gold_country_code: str
+    gold_player_id: str
+    silver_country_code: str
+    silver_player_id: str
+    bronze_country_code: str
+    bronze_player_id: str
+
+    def to_tuple(self):
+        return astuple(self)
+
+    def to_dict(self):
+        return asdict(self)

@@ -6,7 +6,7 @@ from tkinter.messagebox import showinfo, showerror, askyesno
 from services.Players.Player import PlayerService
 import difflib
 from response.User import InsertPlayerResponse, UserConfig, UserDeleteResponse, UserModifyResponse
-from response.sighUpRaceResponse import SignUpRace
+from response.sighUpRace import SignUpRace
 from models.competition import Competition
 from ui.MediaWindow.MediaWindow import MediaPlayerDialogWindow, open_window
 

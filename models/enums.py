@@ -8,6 +8,7 @@ class ColumnName(Enum):
     admin = '管理员'
     player = '我的比赛'
     reward = '精彩时刻'
+    medal_log = '奖牌榜日志'
 
 @unique
 class Column(Enum):
@@ -17,4 +18,8 @@ class Column(Enum):
     admin = ('管理员账号', '管理员名称', '管理员联系方式')
     player = ('运动员账号', '运动员名称', '运动员联系方式')
     reward = ('比赛ID', '比赛名称')
+    medal_log = ('比赛ID', '比赛名称', '金牌国家代码', '金牌运动员ID',
+                 '银牌国家代码', '银牌运动员ID',
+                 '铜牌国家代码',
+                 '铜牌运动员ID')
 

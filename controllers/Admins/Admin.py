@@ -1,4 +1,5 @@
 from ui.AdminWindow import AdminDialogWindow
+from ui.common.MedalLogTreeview import MedalLogTreeview
 from utils.make_image import make_image
 import tkinter as tk
 from models.enums import ColumnName
@@ -35,22 +36,23 @@ class AdminWindow(AdminDialogWindow):
                 dialog.setup_ui(TeamTreeview, init_data = data)
                 Button_event = TeamButtonCommand(dialog, tree = self.team_tree)
             case ColumnName.medal:
-                dialog.setup_ui(RankTreeview, init_data = data)
-                Button_event = MedalButtonCommand(dialog, tree = self.medalRank_tree)
+                dialog.setup_ui(MedalLogTreeview, init_data = data)
+                Button_event = MedalButtonCommand(dialog)
             case ColumnName.admin:
                 dialog.setup_ui(UserTreeview, init_data = data)
                 Button_event = AdminButtonCommand(dialog, tree = self.admin_tree)
             case _:
                 Button_event = None
 
-        dialog.setup_func(Button_event)
+        dialog.setup_func(Button_event, all_ = True
+                          if function != ColumnName.medal else False)
         dialog.pack()
         dialog.mainloop()
 
     def init_button_function(self):
         self.race_mannageBtn.config(command = lambda : self.setup_DialogWindow(self.__db.query_all_race(), ColumnName.race))
         self.team_mannageBtn.config(command = lambda : self.setup_DialogWindow(self.__db.query_all_team(), ColumnName.team))
-        self.medal_mannageBtn.config(command = lambda : self.setup_DialogWindow(self.__db.query_medal_rank(), ColumnName.medal))
+        self.medal_mannageBtn.config(command = lambda : self.setup_DialogWindow(self.__db.query_reward_log(), ColumnName.medal))
         self.admin_mannageBtn.config(command = lambda : self.setup_DialogWindow(self.__db.query_admin(), ColumnName.admin))
 
     @staticmethod
