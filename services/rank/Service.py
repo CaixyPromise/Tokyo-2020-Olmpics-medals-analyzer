@@ -202,6 +202,17 @@ class MedalRankService(DatabaseConnection):
         """
         return [MedalLogResponse(*v) for v in self.execute(sql, ret = 'all')]
 
+    # 新增奖牌插入日志
+    def insert_medal_log(self, reponse:MedalLogResponse):
+        sql = """
+        INSERT INTO medal_log (
+            race_id, race_name, 
+            gold_country_code, gold_player_id,
+            silver_country_code, silver_player_id, 
+            bronze_country_code, bronze_player_id) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+        """
+        self.execute(sql, args = reponse.to_tuple(), commit = True)
 
     def modify_medal_info(self, medal_node):
         sql = f"UPDATE medal_rank SET rank=?, gold=?, silver=?, bronze=?, count=? WHERE countryid=?"

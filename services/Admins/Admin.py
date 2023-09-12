@@ -92,6 +92,10 @@ class AdminService(DatabaseConnection):
     def insert_medal(self, reponse):
         return self.__medal.insert_medal(reponse)
 
+    # 新增奖牌插入日志
+    def insert_medal_log(self, reponse : MedalLogResponse):
+        return self.__medal.insert_medal_log(reponse)
+
     # 查询奖牌插入日志
     def query_reward_log(self) -> List[MedalLogResponse]:
         return self.__medal.query_reward_log()

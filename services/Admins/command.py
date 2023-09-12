@@ -410,7 +410,8 @@ class MedalButtonCommand(Ui_Function):
                 executor.submit(copy_and_rename_files, record_path, race_id, race_name,
                                 [gold_player, silver_player, bronze_player]
                                 )
-                # 更新金牌榜和奖牌榜
+            # 更新金牌榜和奖牌榜
+
             # new_gold, new_silver, new_bronze, new_count = self.__get_new_medal_count(gold_code, gold = 1)
             # self.__update_rank__(gold_code, new_gold, new_silver, new_bronze, new_count)
             #
@@ -419,7 +420,16 @@ class MedalButtonCommand(Ui_Function):
             #
             # new_gold, new_silver, new_bronze, new_count = self.__get_new_medal_count(bronze_code, bronze = 1)
             # self.__update_rank__(bronze_code, new_gold, new_silver, new_bronze, new_count)
-            self.treeview.insert_single(m)
+
+            response = MedalLogResponse(race_id = race_id, race_name = race_name,
+                                        gold_country_code = gold_code,
+                                        gold_player_id = gold_player,
+                                        silver_country_code = silver_code,
+                                        silver_player_id = silver_player,
+                                        bronze_country_code = bronze_code,
+                                        bronze_player_id = bronze_player,)
+            self.__service.insert_medal_log(response)
+            self.treeview.insert_single(response)
             messagebox.showinfo('提示', '添加成功')
         else:
             messagebox.showinfo('提示', '添加失败, 请检查信息是否完整')
