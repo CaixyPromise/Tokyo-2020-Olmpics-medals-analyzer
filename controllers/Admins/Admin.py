@@ -1,3 +1,6 @@
+import difflib
+from tkinter.messagebox import showerror
+
 from ui.AdminWindow import AdminDialogWindow
 from ui.common.MedalLogTreeview import MedalLogTreeview
 from utils.make_image import make_image
@@ -9,7 +12,6 @@ from tkinter import Toplevel
 from ui.MannagerWindow import MannageDialogWindow
 from services.Admins.command import RaceButtonCommand, TeamButtonCommand, MedalButtonCommand, AdminButtonCommand
 from utils.GlobalStatic import GlobalResources
-from ui.common.RankTreeview import RankTreeview
 from ui.common.RaceTreeview import RaceTreeview
 from ui.common.TeamTreeview import TeamTreeview
 from ui.common.UserTreeview import UserTreeview
@@ -22,6 +24,7 @@ class AdminWindow(AdminDialogWindow):
         self.get_db()
         self.init_medalRank()
         self.init_button_function()
+        self.bind_function()
 
     def setup_DialogWindow(self, data, function):
 
@@ -36,7 +39,8 @@ class AdminWindow(AdminDialogWindow):
                 Button_event = TeamButtonCommand(dialog, tree = self.team_tree)
             case ColumnName.medal:
                 dialog.setup_ui(MedalLogTreeview, init_data = data)
-                Button_event = MedalButtonCommand(dialog)
+                Button_event = MedalButtonCommand(dialog, tree = self.medalRank_tree,
+                                                  gold_tree = self.goldRank_tree)
             case ColumnName.admin:
                 dialog.setup_ui(UserTreeview, init_data = data)
                 Button_event = AdminButtonCommand(dialog, tree = self.admin_tree)
@@ -90,10 +94,54 @@ class AdminWindow(AdminDialogWindow):
         self.__static['flags'] = {val.countryid : make_image(val.flag) for val in self.__medal_rank}
         # 根据奖牌榜排序获取金牌榜 --> 深拷贝
         self.__gold_rank = self.init_glodRank(deepcopy(self.__medal_rank))
+    def search(self, search_entry, treeview, column_index = None):
+        target_string = search_entry
+        if target_string == '':
+            showerror('错误', '请输入搜索内容')
+            return
 
+        max_similarity = 0
+        most_similar_item = None
+
+        for item in treeview.get_children():
+            row_data = treeview.item(item, "values")
+            if (column_index):
+                # 只在 国家名称 和 国家代码 列进行搜索
+                search_columns = [row_data[i] for i in column_index]
+            else:
+                search_columns = row_data
+            for cell_data in search_columns:
+                similarity = difflib.SequenceMatcher(None, target_string, cell_data).ratio()
+                if similarity > max_similarity:
+                    max_similarity = similarity
+                    most_similar_item = item
+        if most_similar_item:
+            treeview.selection_set(most_similar_item)
+            treeview.see(most_similar_item)
+        else:
+            showerror('没有找到', '没有找到与输入相似的项')
+
+    def bind_search_function(self, button, entry, tree, column_index = None):
+        if column_index:
+            button.config(command = lambda: self.search(entry.get().upper(), tree, column_index = column_index))
+            entry.bind('<Return>', lambda x: self.search(entry.get().upper(), tree, column_index = column_index))
+        else:
+            button.config(command = lambda: self.search(entry.get().upper(), tree))
+            entry.bind('<Return>', lambda x: self.search(entry.get().upper(), tree))
+
+    def bind_function(self):
+        self.bind_search_function(self.goldRankSearch_button, self.goldRankSearch_entry, self.goldRank_tree,
+                             column_index = (0, 1)
+                             )
+        self.bind_search_function(self.medalRankSearch_btn, self.medalRankSearch_entry, self.medalRank_tree,
+                             column_index = (0, 1)
+                             )
+
+        self.bind_search_function(self.teamSearch_button, self.teamSearch_entry, self.team_tree,)
     def init_medalRank(self):
         self.medalRank_tree.insert_manny(self.__medal_rank)
         self.goldRank_tree.insert_manny(self.__gold_rank)
         self.race_tree.insert_manny(self.__db.query_all_race())
         self.team_tree.insert_manny(self.__db.query_all_team())
         self.admin_tree.insert_manny(self.__db.query_admin())
+

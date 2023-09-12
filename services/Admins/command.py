@@ -269,7 +269,8 @@ class MedalButtonCommand(Ui_Function):
     def __init__(self, parent = None, **kwargs):
         super(MedalButtonCommand, self).__init__(parent, **kwargs)
         self.__service = AdminService()
-        # self.main_tree = self.part.get('tree')  # 主界面的tree
+        self.rank_tree = self.part.get('tree')  # 主界面的tree
+        self.gold_tree = self.part.get('gold_tree')  # 主界面的金牌榜
         self.treeview = self.parent.treeview  # 子界面的tree -- mannager 界面里的
         self.__gold_var = StringVar(value = '')
         self.__silver_var = StringVar(value = '')
@@ -299,7 +300,42 @@ class MedalButtonCommand(Ui_Function):
             {'type': 'button', 'text': '精彩时刻', 'command' : lambda : self.__choice__(3)}
             ]},
         }
+        # 把tree的国家ID分出来
+        # self.getCode_from_Item()
 
+    def getCode_from_Item(self):
+        self.item_CountryDict = {}
+        for rank_item, gold_item in zip(self.rank_tree.get_children(),
+                                                   self.gold_tree.get_children(),
+
+                                                   ):
+            rank_data = self.rank_tree.item(rank_item, 'values')
+            gold_data = self.gold_tree.item(gold_item, 'values')
+
+            rank_country_code = rank_data[1]
+            gold_country_code = gold_data[1]
+
+            # 用于存储每个国家代码下的不同榜单信息的子字典
+            if rank_country_code not in self.item_CountryDict:
+                self.item_CountryDict[rank_country_code] = {}
+
+            # 存储奖牌榜信息
+            self.item_CountryDict[rank_country_code]['rank'] = {
+                'item':   rank_item,
+                'gold':   rank_data[2],
+                'silver': rank_data[3],
+                'bronze': rank_data[4],
+                'count':  rank_data[5]
+            }
+
+            # 存储金牌榜信息
+            self.item_CountryDict[gold_country_code]['gold'] = {
+                'item':   gold_item,
+                'gold':   gold_data[2],
+                'silver': gold_data[3],
+                'bronze': gold_data[4],
+                'count':  gold_data[5]
+            }
     def __choice__(self, _cls):
         file_path = askopenfilename(filetypes = [("MP4 files", "*.mp4"), ("All files", "*.*")])
         if file_path:
@@ -309,6 +345,38 @@ class MedalButtonCommand(Ui_Function):
                 self.__silver_var.set(file_path)
             elif (_cls == 3):
                 self.__bronze_var.set(file_path)
+
+    def __update_rank__(self, country_code, new_gold, new_silver, new_bronze, new_count):
+        # 更新奖牌榜
+        self.__update_specific_rank__('rank', country_code, new_gold, new_silver, new_bronze, new_count)
+        # 更新金牌榜
+        self.__update_specific_rank__('gold', country_code, new_gold, new_silver, new_bronze, new_count)
+
+    def __update_specific_rank__(self, rank_type, country_code, new_gold, new_silver, new_bronze, new_count):
+        # 更新内存中的数据
+        self.item_CountryDict[country_code][rank_type]['gold'] = new_gold
+        self.item_CountryDict[country_code][rank_type]['silver'] = new_silver
+        self.item_CountryDict[country_code][rank_type]['bronze'] = new_bronze
+        self.item_CountryDict[country_code][rank_type]['count'] = new_count
+
+        # 更新 Treeview 中的数据
+        item_id = self.item_CountryDict[country_code][rank_type]['item']
+        if rank_type == 'rank':
+            self.rank_tree.item(item_id, values = (new_gold, new_silver, new_bronze, new_count))
+        elif rank_type == 'gold':
+            self.gold_tree.item(item_id, values = (new_gold, new_silver, new_bronze, new_count))
+
+    def __get_new_medal_count(self, country_code, gold = 0, silver = 0, bronze = 0):
+        if country_code in self.item_CountryDict:
+            new_gold = self.item_CountryDict[country_code]['rank']['gold'] + gold
+            new_silver = self.item_CountryDict[country_code]['rank']['silver'] + silver
+            new_bronze = self.item_CountryDict[country_code]['rank']['bronze'] + bronze
+            new_count = self.item_CountryDict[country_code]['rank']['count'] + (gold + silver + bronze)
+
+            return new_gold, new_silver, new_bronze, new_count
+        else:
+            # 国家代码不存在于字典中
+            return None
 
     def add(self, **kwags):
         win = AskUserQuestionDialog(part_dict = self.question_config,
@@ -342,8 +410,17 @@ class MedalButtonCommand(Ui_Function):
                 executor.submit(copy_and_rename_files, record_path, race_id, race_name,
                                 [gold_player, silver_player, bronze_player]
                                 )
-            messagebox.showinfo('提示', '添加成功')
+                # 更新金牌榜和奖牌榜
+            # new_gold, new_silver, new_bronze, new_count = self.__get_new_medal_count(gold_code, gold = 1)
+            # self.__update_rank__(gold_code, new_gold, new_silver, new_bronze, new_count)
+            #
+            # new_gold, new_silver, new_bronze, new_count = self.__get_new_medal_count(silver_code, silver = 1)
+            # self.__update_rank__(silver_code, new_gold, new_silver, new_bronze, new_count)
+            #
+            # new_gold, new_silver, new_bronze, new_count = self.__get_new_medal_count(bronze_code, bronze = 1)
+            # self.__update_rank__(bronze_code, new_gold, new_silver, new_bronze, new_count)
             self.treeview.insert_single(m)
+            messagebox.showinfo('提示', '添加成功')
         else:
             messagebox.showinfo('提示', '添加失败, 请检查信息是否完整')
 
@@ -357,9 +434,6 @@ class MedalButtonCommand(Ui_Function):
                 medal_node = self.__service.delete_medal_info(response)
                 self.treeview.delete(selection[0])
                 self.treeview.update()
-                # self.main_tree.delete(selection[0])
-                # self.main_tree.update()
-
         return
 
     def modify(self, **kwags):

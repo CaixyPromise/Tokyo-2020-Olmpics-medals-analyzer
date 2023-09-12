@@ -81,6 +81,15 @@ class AdminDialogWindow(ttk.Frame):
         # 设置一个TreeViewUtils布局，用于显示金牌榜信息：列名：排名、国家/地区、金牌、银牌、铜牌、总数
         self.Goldmedal_infoFrame = ttk.Frame(self.notebook)
         self.Goldmedal_infoFrame.pack(expand = True, fill = "both")
+        # 金牌榜顶部搜索框
+        gold_search_frame = ttk.Frame(self.Goldmedal_infoFrame)
+        gold_search_frame.pack(side = "top", fill = "x", expand = True)
+        ttk.Label(gold_search_frame, text = "金牌榜搜索", font = ( 'Helvetica', 16,)).pack(side = "left")
+        self.goldRankSearch_entry = ttk.Entry(gold_search_frame, width = 80)
+        self.goldRankSearch_entry.pack(side = "left", fill = "x", expand = True, padx = 5, pady = 5)
+        self.goldRankSearch_button = ttk.Button(gold_search_frame, text = "搜索", width = 10)
+        self.goldRankSearch_button.pack(side = "left", fill = "x", expand = True, padx = 5, pady = 5)
+
         self.goldRank_scrollbar = ttk.Scrollbar(self.Goldmedal_infoFrame, orient = "vertical", )
         self.goldRank_scrollbar.pack(side = 'right', fill = 'y')
         self.goldRank_tree = RankTreeview(self.Goldmedal_infoFrame)
@@ -93,6 +102,14 @@ class AdminDialogWindow(ttk.Frame):
         # 设置一个TreeViewUtils布局，用于显示奖牌榜信息：列名：排名、国家/地区、金牌、银牌、铜牌、总数
         self.medal_infoFrame = ttk.Frame(self.notebook)
         self.medal_infoFrame.pack(expand = True, fill = "both")
+        medal_searchFrame = ttk.Frame(self.medal_infoFrame)
+        medal_searchFrame.pack(side = "top", fill = "x", expand = True)
+        ttk.Label(medal_searchFrame, text = "奖牌榜搜索", font = ('Helvetica', 16)).pack(side = "left")
+        self.medalRankSearch_entry = ttk.Entry(medal_searchFrame, width = 80)
+        self.medalRankSearch_entry.pack(side = "left", fill = "x", expand = True, padx = 5, pady = 5)
+        self.medalRankSearch_btn = ttk.Button(medal_searchFrame, text = "搜索")
+        self.medalRankSearch_btn.pack(side = "left", fill = "x", expand = True, padx = 5, pady = 5)
+
         self.MedalRank_scrollbar = ttk.Scrollbar(self.medal_infoFrame, orient = "vertical", )
         self.MedalRank_scrollbar.pack(side = 'right', fill = 'y')
         self.medalRank_tree = RankTreeview(self.medal_infoFrame)
@@ -116,6 +133,16 @@ class AdminDialogWindow(ttk.Frame):
         # 国家队信息
         self.team_info_frame = ttk.Frame(self.notebook)
         self.team_info_frame.pack(expand = True, fill = "both")
+
+        team_search_frame = ttk.Frame(self.team_info_frame)
+        team_search_frame.pack(side = "top", fill = "x", expand = True)
+        ttk.Label(team_search_frame, text = "金牌榜搜索", font = ( 'Helvetica', 16,)).pack(side = "left")
+        self.teamSearch_entry = ttk.Entry(team_search_frame, width = 80)
+        self.teamSearch_entry.pack(side = "left", fill = "x", expand = True, padx = 5, pady = 5)
+        self.teamSearch_button = ttk.Button(team_search_frame, text = "搜索", width = 10)
+        self.teamSearch_button.pack(side = "left", fill = "x", expand = True, padx = 5, pady = 5)
+
+
         self.team_scrollbar = ttk.Scrollbar(self.team_info_frame, )
         self.team_scrollbar.pack(side = 'right', fill = 'y')
         self.team_tree = TeamTreeview(self.team_info_frame,
