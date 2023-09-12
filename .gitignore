@@ -146,3 +146,5 @@ cython_debug/
 *.zip
 test.py
 ./static/reward/
+static/reward
+static/reward/
